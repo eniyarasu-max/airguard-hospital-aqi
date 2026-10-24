@@ -71,25 +71,35 @@ export const StatChips: React.FC<StatChipsProps> = ({
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <span className="font-headline-md text-2xl font-light text-slate-900 tabular-nums">
-                {isSingleNode ? 'Node 01 Online' : `${onlineRooms} / ${totalRooms} Online`}
+                {isSingleNode
+                  ? (onlineRooms > 0 ? 'Node 01 Online' : 'Node 01 Offline')
+                  : `${onlineRooms} / ${totalRooms} Online`}
               </span>
               <span className={`w-2 h-2 rounded-full ${
-                onlineRooms >= totalRooms
+                onlineRooms >= totalRooms && onlineRooms > 0
                   ? 'bg-cyan-500 shadow-[0_0_8px_rgba(0,229,255,0.8)]'
-                  : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]'
+                  : 'bg-slate-400'
               }`} />
             </div>
             <span className="font-body-md text-sm text-slate-800 font-medium mt-0.5 tabular-nums">
-              {isSingleNode ? '100% Real-Time Node Telemetry' : `${Math.round((onlineRooms / (totalRooms || 1)) * 100)}% Telemetry Coverage`}
+              {isSingleNode
+                ? (onlineRooms > 0 ? '100% Real-Time Node Telemetry' : 'Awaiting ESP32 Connection')
+                : `${Math.round((onlineRooms / (totalRooms || 1)) * 100)}% Telemetry Coverage`}
             </span>
             <span className="font-label-sm text-xs text-slate-500">
-              Laminar Pressure & Kongu Node Stream Sync
+              Laminar Pressure &amp; Kongu Node Stream Sync
             </span>
           </div>
         </div>
         <div className="flex flex-col items-end">
-          <span className="font-label-mono text-[10px] text-cyan-800 bg-cyan-50/90 border border-cyan-200/80 px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap shadow-[0_0_8px_rgba(0,229,255,0.15)]">
-            {isSingleNode ? 'KONGU NODE 01 ACTIVE' : (onlineRooms === totalRooms ? 'ALL NODES ACTIVE' : `${totalRooms - onlineRooms} DEGRADED`)}
+          <span className={`font-label-mono text-[10px] px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap ${
+            onlineRooms > 0
+              ? 'text-cyan-800 bg-cyan-50/90 border border-cyan-200/80 shadow-[0_0_8px_rgba(0,229,255,0.15)]'
+              : 'text-slate-600 bg-slate-100/90 border border-slate-200/80'
+          }`}>
+            {isSingleNode
+              ? (onlineRooms > 0 ? 'KONGU NODE 01 ACTIVE' : 'WAITING FOR NODE')
+              : (onlineRooms === totalRooms ? 'ALL NODES ACTIVE' : `${totalRooms - onlineRooms} DEGRADED`)}
           </span>
         </div>
       </div>
@@ -111,12 +121,14 @@ export const StatChips: React.FC<StatChipsProps> = ({
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <span className="font-headline-md text-2xl font-light text-slate-900 tabular-nums">
-                {isSingleNode || offlineDevicesCount === 0 ? 'ESP32 Link Active' : `${offlineDevicesCount} Device Offline`}
+                {(isSingleNode || offlineDevicesCount === 0) && onlineRooms > 0 ? 'ESP32 Link Active' : offlineDevicesCount === 0 ? 'Awaiting Node' : `${offlineDevicesCount} Device Offline`}
               </span>
               <span className={`w-2 h-2 rounded-full ${
                 offlineDevicesCount > 0 && !isSingleNode
                   ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]'
-                  : 'bg-cyan-500 shadow-[0_0_8px_rgba(0,229,255,0.8)]'
+                  : onlineRooms > 0
+                  ? 'bg-cyan-500 shadow-[0_0_8px_rgba(0,229,255,0.8)]'
+                  : 'bg-slate-400'
               }`} />
             </div>
             <span className="font-body-md text-sm text-slate-800 font-medium mt-0.5">
