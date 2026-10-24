@@ -129,7 +129,7 @@ export const App: React.FC = () => {
         onTestChime={playNodeConnectionChime}
       />
 
-      <div className="lg:pl-32 lg:pr-6 pt-20 lg:pt-32 pb-24 lg:pb-12 px-4 sm:px-6 relative z-10 max-w-[1600px] mx-auto">
+      <div className="lg:pl-28 lg:pr-5 pt-18 lg:pt-24 pb-20 lg:pb-10 px-3 sm:px-6 relative z-10 max-w-[1600px] mx-auto">
         {roomsError && !demoMode && (
           <div className="mb-6 p-4 rounded-2xl bg-amber-50/90 backdrop-blur-md border border-amber-200 text-amber-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-label-mono text-xs animate-startup-1">
             <div className="flex items-center gap-2">
