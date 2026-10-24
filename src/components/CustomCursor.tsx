@@ -93,12 +93,12 @@ export const CustomCursor: React.FC = () => {
       {/* Fluid Liquid Halo Ring */}
       <div
         ref={ringRef}
-        className={`fixed top-0 left-0 -ml-5 -mt-5 w-10 h-10 rounded-full border border-cyan-400/40 bg-cyan-400/10 backdrop-blur-[2px] transition-all duration-200 ease-out ${
+        className={`fixed top-0 left-0 -ml-5 -mt-5 w-10 h-10 rounded-full border border-cyan-300/50 bg-gradient-to-tr from-cyan-400/20 via-sky-300/10 to-transparent backdrop-blur-[3px] transition-all duration-200 ease-out ${
           clicking
-            ? 'scale-75 border-cyan-300/80 bg-cyan-300/25 shadow-[0_0_20px_rgba(0,229,255,0.4)]'
+            ? 'scale-75 border-cyan-300/90 bg-cyan-300/30 shadow-[0_0_24px_rgba(0,229,255,0.55)]'
             : hovered
-            ? 'scale-140 border-cyan-400/80 bg-cyan-400/15 shadow-[0_0_22px_rgba(0,229,255,0.35)]'
-            : 'scale-100 shadow-[0_0_12px_rgba(0,229,255,0.15)]'
+            ? 'scale-140 border-cyan-300/80 bg-cyan-400/20 shadow-[0_0_26px_rgba(0,229,255,0.4)]'
+            : 'scale-100 shadow-[0_0_15px_rgba(0,229,255,0.2)]'
         }`}
       />
     </div>

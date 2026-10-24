@@ -17,11 +17,13 @@ import { SettingsView } from './components/SettingsView';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { EceHardwareAnnunciator } from './components/EceHardwareAnnunciator';
 import { CustomCursor } from './components/CustomCursor';
+import { playNodeConnectionChime } from './utils/audioChimes';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showConnectionToast, setShowConnectionToast] = useState<boolean>(false);
 
   const { rooms, loading: roomsLoading, error: roomsError, demoMode, toggleDemoMode } = useRooms();
   const { alerts, acknowledgeAlert } = useAlerts(rooms, demoMode);
@@ -50,6 +52,20 @@ export const App: React.FC = () => {
   const offlineDevices = totalRooms - onlineRooms;
   const unackAlerts = Object.values(alerts).filter((a) => !a.acknowledged);
 
+  const isNodeOnline = onlineRooms > 0;
+  const prevOnlineRef = React.useRef<boolean>(false);
+
+  // Play clinical dual-tone chime (880 Hz -> 1760 Hz) when ESP32 transitions to Online
+  React.useEffect(() => {
+    if (!prevOnlineRef.current && isNodeOnline) {
+      playNodeConnectionChime();
+      setShowConnectionToast(true);
+      const timer = setTimeout(() => setShowConnectionToast(false), 5000);
+      return () => clearTimeout(timer);
+    }
+    prevOnlineRef.current = isNodeOnline;
+  }, [isNodeOnline]);
+
   const focusedRoom = selectedRoomId ? rooms[selectedRoomId] || null : null;
   const primaryRoom = rooms.icu || roomList[0] || null;
 
@@ -57,18 +73,49 @@ export const App: React.FC = () => {
     <div className="bg-[#f8fafc] font-body-md text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-cyan-100 selection:text-cyan-900">
       <CustomCursor />
 
-      {/* Atmospheric Background Glow */}
+      {/* Atmospheric Liquid Glow Orbs with Neon Cyan Hue */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-40 left-10 w-[640px] h-[640px] bg-cyan-400/20 rounded-full blur-[140px]" />
-        <div className="absolute top-1/3 -right-20 w-[580px] h-[580px] bg-blue-500/18 rounded-full blur-[160px]" />
-        <div className="absolute -bottom-20 left-1/4 w-[600px] h-[600px] bg-cyan-600/15 rounded-full blur-[150px]" />
-        <div className="absolute top-2/3 left-10 w-[420px] h-[420px] bg-sky-400/18 rounded-full blur-[130px]" />
+        <div className="absolute -top-40 left-10 w-[680px] h-[680px] bg-cyan-400/25 rounded-full blur-[150px]" />
+        <div className="absolute top-1/3 -right-20 w-[620px] h-[620px] bg-blue-500/20 rounded-full blur-[170px]" />
+        <div className="absolute -bottom-20 left-1/4 w-[640px] h-[640px] bg-cyan-500/18 rounded-full blur-[160px]" />
+        <div className="absolute top-2/3 left-10 w-[460px] h-[460px] bg-sky-400/20 rounded-full blur-[140px]" />
         
-        <div className="cleanroom-particle absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" style={{ animationDelay: '0s' }} />
-        <div className="cleanroom-particle absolute top-1/2 right-1/4 w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_#38bdf8]" style={{ animationDelay: '2.5s' }} />
-        <div className="cleanroom-particle absolute bottom-1/3 left-1/3 w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_#00e5ff]" style={{ animationDelay: '4.5s' }} />
-        <div className="cleanroom-particle absolute top-3/4 right-1/3 w-2 h-2 rounded-full bg-sky-300 shadow-[0_0_8px_#0284c7]" style={{ animationDelay: '1.2s' }} />
+        <div className="cleanroom-particle absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff]" style={{ animationDelay: '0s' }} />
+        <div className="cleanroom-particle absolute top-1/2 right-1/4 w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_12px_#38bdf8]" style={{ animationDelay: '2.5s' }} />
+        <div className="cleanroom-particle absolute bottom-1/3 left-1/3 w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_#00e5ff]" style={{ animationDelay: '4.5s' }} />
+        <div className="cleanroom-particle absolute top-3/4 right-1/3 w-2 h-2 rounded-full bg-sky-300 shadow-[0_0_10px_#0284c7]" style={{ animationDelay: '1.2s' }} />
       </div>
+
+      {/* Liquid Node Connection Floating Toast */}
+      {showConnectionToast && (
+        <aside
+          role="status"
+          aria-live="polite"
+          className="fixed top-24 right-4 sm:right-8 z-50 flex items-center gap-3.5 px-4 py-3 rounded-2xl liquid-glass liquid-glass-glow border-cyan-400/70 shadow-[0_20px_50px_rgba(0,229,255,0.25)] animate-startup-1"
+        >
+          <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-400/80 flex items-center justify-center text-cyan-500 shadow-[0_0_14px_rgba(0,229,255,0.6)] shrink-0">
+            <span className="material-symbols-outlined text-xl animate-pulse">sensors</span>
+          </div>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-label-mono text-xs font-bold text-slate-900 tracking-wide">
+                Kongu Node 01 Connected
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" />
+            </div>
+            <span className="font-label-mono text-[10px] text-cyan-700">
+              Clinical Telemetry Synced · Dual-Tone Chime (880 Hz → 1760 Hz)
+            </span>
+          </div>
+          <button
+            onClick={() => setShowConnectionToast(false)}
+            aria-label="Dismiss toast"
+            className="ml-2 text-slate-400 hover:text-slate-700 p-1 rounded-lg cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-base">close</span>
+          </button>
+        </aside>
+      )}
 
       <Navigation
         currentTab={currentTab}
@@ -78,7 +125,8 @@ export const App: React.FC = () => {
         onToggleDemoMode={toggleDemoMode}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        nodeOnline={onlineRooms > 0}
+        nodeOnline={isNodeOnline}
+        onTestChime={playNodeConnectionChime}
       />
 
       <div className="lg:pl-32 lg:pr-6 pt-20 lg:pt-32 pb-24 lg:pb-12 px-4 sm:px-6 relative z-10 max-w-[1600px] mx-auto">

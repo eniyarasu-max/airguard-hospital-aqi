@@ -11,6 +11,7 @@ interface NavigationProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   nodeOnline: boolean;
+  onTestChime?: () => void;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -20,7 +21,8 @@ export const Navigation: React.FC<NavigationProps> = ({
   demoMode,
   searchQuery,
   onSearchChange,
-  nodeOnline
+  nodeOnline,
+  onTestChime
 }) => {
   return (
     <>
@@ -202,6 +204,17 @@ export const Navigation: React.FC<NavigationProps> = ({
             </div>
           )}
 
+          {onTestChime && (
+            <button
+              onClick={onTestChime}
+              title="Audition Clinical Dual-Tone Chime (880 Hz → 1760 Hz Handshake)"
+              className="px-2.5 py-1.5 rounded-full bg-cyan-50/90 hover:bg-cyan-100 border border-cyan-200/80 text-cyan-800 text-[11px] font-label-mono font-bold flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,229,255,0.15)] active:scale-95 cursor-pointer transition-all"
+            >
+              <span className="material-symbols-outlined text-sm text-cyan-600">volume_up</span>
+              <span className="hidden xl:inline">Chime Test</span>
+            </button>
+          )}
+
           <button
             onClick={() => onSelectTab('alerts')}
             aria-label="Alerts"
@@ -256,6 +269,15 @@ export const Navigation: React.FC<NavigationProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {onTestChime && (
+              <button
+                onClick={onTestChime}
+                aria-label="Test Chime"
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-cyan-50/90 border border-cyan-200/80 shadow-sm text-cyan-700 active:scale-90 transition-all cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[19px]">volume_up</span>
+              </button>
+            )}
             <button
               onClick={() => onSelectTab('alerts')}
               aria-label="Alerts"
