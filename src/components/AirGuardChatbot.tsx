@@ -120,9 +120,9 @@ YOUR MISSION:
    - How to export 1-click ISO 14644 Compliance Summary PDF/CSV audits
 4. Keep answers professional, concise, clinical, and accurate. Use clear Markdown bullet points where appropriate.`;
 
-        // Direct fetch to Gemini API endpoint
+        // Direct fetch to Gemini API endpoint (gemini-3.8-flash)
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -138,9 +138,9 @@ YOUR MISSION:
         );
 
         if (!response.ok) {
-          // Fallback to gemini-1.5-flash if 2.5 is not accessible with key
+          // Fallback to gemini-2.5-flash or gemini-1.5-flash if needed
           const fallbackResp = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
