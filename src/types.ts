@@ -56,8 +56,8 @@ export interface AlertData {
   alertId: string;
   roomId: string;
   roomName?: string;
-  type: string;        // e.g. "co2_spike", "dust_elevation", "rh_deviation"
-  severity: 'warning' | 'critical';
+  type: string;        // e.g. "co2_spike", "dust_elevation", "rh_deviation", "general"
+  severity: 'warning' | 'critical' | 'info';
   message: string;
   timestamp: number;
   acknowledged: boolean;

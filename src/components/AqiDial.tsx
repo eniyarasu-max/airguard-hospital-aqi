@@ -48,20 +48,21 @@ export const AqiDial: React.FC<AqiDialProps> = ({
           boxShadow: `
             0 24px 48px -12px rgba(15, 23, 42, 0.25),
             0 10px 20px -5px rgba(15, 23, 42, 0.12),
+            0 0 25px rgba(0, 229, 255, 0.22),
             inset 0 2px 2px 0 rgba(255, 255, 255, 1),
             inset 0 -2px 3px 0 rgba(51, 65, 85, 0.45)
           `
         }}
       >
         {/* Cardinal Direction Lathe Fastener Markers */}
-        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-slate-400 shadow-[inset_0_0.5px_1px_rgba(0,0,0,0.4)] pointer-events-none" />
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-slate-400 shadow-[inset_0_0.5px_1px_rgba(0,0,0,0.4)] pointer-events-none" />
-        <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-slate-400 shadow-[inset_0_0.5px_1px_rgba(0,0,0,0.4)] pointer-events-none" />
-        <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-slate-400 shadow-[inset_0_0.5px_1px_rgba(0,0,0,0.4)] pointer-events-none" />
+        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff] pointer-events-none" />
+        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff] pointer-events-none" />
+        <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff] pointer-events-none" />
+        <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00f0ff] pointer-events-none" />
 
         {/* Recessed Dial Cup with Deep Ambient Occlusion */}
         <div
-          className="w-full h-full rounded-full relative flex items-center justify-center overflow-hidden border border-slate-300/80"
+          className="w-full h-full rounded-full relative flex items-center justify-center overflow-hidden border border-cyan-200/40"
           style={{
             background: 'radial-gradient(circle at 50% 48%, #ffffff 0%, #f8fafc 60%, #eef2f6 100%)',
             boxShadow: `
@@ -77,10 +78,10 @@ export const AqiDial: React.FC<AqiDialProps> = ({
             viewBox={`0 0 ${diameter} ${diameter}`}
           >
             <defs>
-              {/* Active Trace Multi-stop Gradient */}
+              {/* Active Trace Multi-stop Gradient with Neon Blue */}
               <linearGradient id="activeArcGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#10b981" />
-                <stop offset="60%" stopColor={color} />
+                <stop offset="0%" stopColor="#00f0ff" />
+                <stop offset="45%" stopColor="#0284c7" />
                 <stop offset="100%" stopColor={color} />
               </linearGradient>
 

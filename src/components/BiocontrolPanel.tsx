@@ -7,17 +7,17 @@ interface BiocontrolPanelProps {
 }
 
 export const BiocontrolPanel: React.FC<BiocontrolPanelProps> = ({
-  roomName = 'ICU Suite 401',
+  roomName = 'Kongu Cleanroom Suite (Node 01)',
   pressurePa = -14.2,
   achTarget = 16
 }) => {
   return (
-    <div className="rounded-[24px] glass-panel shimmer-effect p-space-lg flex flex-col justify-between h-full gpu-layer">
+    <div className="rounded-[24px] glass-panel shimmer-effect p-space-lg flex flex-col justify-between h-full gpu-layer border-cyan-200/40 shadow-[0_15px_40px_-5px_rgba(2,132,199,0.08),0_0_20px_rgba(0,229,255,0.05)]">
       <div>
         {/* Top Header */}
         <div className="flex items-center justify-between pb-space-md mb-space-md border-b border-slate-200/70">
           <div className="flex items-center gap-space-sm">
-            <span className="material-symbols-outlined text-teal-600 text-2xl">
+            <span className="material-symbols-outlined text-cyan-600 text-2xl drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]">
               cyclone
             </span>
             <div>

@@ -53,9 +53,9 @@
 #define FIREBASE_API_KEY      "AIzaSyBTJ4S7RHnb5L5L6N8eSOmGJKj-648dzQM"
 #define FIREBASE_DATABASE_URL "https://airguard-hospital-aqi-default-rtdb.asia-southeast1.firebasedatabase.app"
 
-// Node Identification
+// Node Identification (Kongu Hospital - Lead: ENIYAN)
 #define ROOM_ID               "icu"
-#define ROOM_DISPLAY_NAME     "ICU Suite 401"
+#define ROOM_DISPLAY_NAME     "Kongu Cleanroom Node 01"
 #define ROOM_ZONE             "icu"
 
 // Timing & Cadence (Milliseconds)
@@ -441,7 +441,8 @@ void setup() {
   setCpuFrequencyMhz(80);
 
   Serial.println("\n\n==============================================================");
-  Serial.println("  AIRGUARD CLINICAL AQI MONITOR - OPTIMIZED FIRMWARE");
+  Serial.println("  AIRGUARD CLINICAL AQI MONITOR - KONGU HOSPITAL (NODE 01)");
+  Serial.println("  Lead ECE Project Engineer: ENIYAN");
   Serial.printf("  CPU Clock: %d MHz | Power Optimization Enabled\n", getCpuFrequencyMhz());
   Serial.println("==============================================================");
 

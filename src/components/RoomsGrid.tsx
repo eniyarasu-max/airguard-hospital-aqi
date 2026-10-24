@@ -41,21 +41,21 @@ export const RoomsGrid: React.FC<RoomsGridProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-space-md gap-2">
         <div className="flex items-center gap-space-sm">
-          <span className="material-symbols-outlined text-teal-600 text-2xl">
+          <span className="material-symbols-outlined text-cyan-600 text-2xl drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]">
             meeting_room
           </span>
           <div>
             <h3 className="font-headline-md text-xl md:text-2xl font-light text-slate-900">
-              Zonal Hospital Cleanrooms & Surgical Suites
+              Kongu Hospital Cleanroom Telemetry · Node 01
             </h3>
             <p className="font-label-sm text-xs text-slate-500">
-              Live decentralized IoT telemetry stream from multi-stage isolation chambers
+              Direct high-frequency IoT aerometrics stream from Kongu cleanroom suite (ENIYAN)
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <span className="font-label-mono text-xs text-slate-400 uppercase">
-            Click any suite for sensor diagnostics
+            Click suite for deep transducer diagnostics
           </span>
         </div>
       </div>
@@ -68,7 +68,7 @@ export const RoomsGrid: React.FC<RoomsGridProps> = ({
           const isSelected = selectedRoomId === room.id;
 
           const badgeClasses = {
-            teal: 'bg-teal-50 text-teal-800 border-teal-200/70',
+            teal: 'bg-cyan-50/90 text-cyan-800 border-cyan-200/80 shadow-[0_0_8px_rgba(0,229,255,0.15)]',
             purple: 'bg-purple-50 text-purple-700 border-purple-200/70',
             slate: 'bg-slate-100 text-slate-600 border-slate-200/60'
           }[badge.tone];

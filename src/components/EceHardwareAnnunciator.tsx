@@ -87,33 +87,33 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
   };
 
   return (
-    <div className="rounded-[24px] bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 p-6 sm:p-7 border border-slate-700/60 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.4),inset_0_1px_0_0_rgba(255,255,255,0.1)] text-slate-100 relative overflow-hidden mb-space-xl">
+    <div className="rounded-[24px] bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 p-6 sm:p-7 border border-cyan-500/30 shadow-[0_20px_45px_-15px_rgba(2,132,199,0.3),0_0_25px_rgba(0,229,255,0.12),inset_0_1px_0_0_rgba(255,255,255,0.1)] text-slate-100 relative overflow-hidden mb-space-xl gpu-layer">
       {/* Background Circuit Grid Texture */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, #00f0ff 1px, transparent 0)`,
           backgroundSize: '24px 24px'
         }}
       />
 
       {/* Top Banner & Control Ribbon */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800/80 relative z-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-cyan-900/40 relative z-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400 shadow-[0_0_15px_rgba(20,184,166,0.2)]">
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(0,229,255,0.35)]">
             <span className="material-symbols-outlined text-2xl">memory</span>
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-headline-md text-base sm:text-lg font-bold tracking-tight text-white">
-                ECE Hardware Transducer & Annunciator Panel
+                Kongu ECE Hardware Transducer & Annunciator Panel
               </h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-label-mono font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                ESP32 NODE {room ? `[${room.id.toUpperCase()}]` : '[ICU]'}
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-label-mono font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(0,229,255,0.2)]">
+                KONGU NODE 01 · ENIYAN
               </span>
             </div>
             <p className="font-label-mono text-xs text-slate-400 mt-0.5">
-              Sensors: DHT22 • MQ-135 • GP2Y1010AU0F | Actuators: 3x LEDs + Piezo Buzzer
+              Sensors: DHT22 (D4) • MQ-135 (D34) • GP2Y1010AU0F (D35/D5) | Actuators: 3x LEDs (D18, D19, D23) + Piezo (D22)
             </p>
           </div>
         </div>

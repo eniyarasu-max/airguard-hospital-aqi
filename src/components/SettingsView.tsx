@@ -62,13 +62,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </div>
 
             <p className="font-body-md text-sm text-slate-600 mb-4">
-              When Demo Mode is enabled, the dashboard simulates real-time decentralized telemetry for all 6 specialized hospital chambers (ICU, Operating Theatre, General Ward, Pharmacy, Waiting Hall, Bio-Lab) with natural atmospheric drift.
+              When Demo Mode is enabled, the dashboard simulates real-time decentralized telemetry for the Kongu Hospital Cleanroom Suite (Node 01) with natural atmospheric drift.
             </p>
 
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs font-label-mono text-slate-600 space-y-1 mb-4">
               <div>• Real Firebase data is utilized when Demo Mode is switched OFF.</div>
-              <div>• In live operation, only the ICU unit connects to physical ESP32 hardware.</div>
-              <div>• Auto ventilation logic triggers purge exhaust when simulated AQI drops.</div>
+              <div>• Connects directly to ENIYAN's physical ESP32 hardware node via RTDB.</div>
+              <div>• Biocontrol logic actuates fan, UV sterilizer, and annunciator LEDs/buzzer.</div>
             </div>
           </div>
 

@@ -11,27 +11,29 @@ interface StatChipsProps {
 
 export const StatChips: React.FC<StatChipsProps> = ({
   activeAlertsCount,
-  latestAlertMessage = "Surgery Suite B HEPA Saturation",
+  latestAlertMessage = "Kongu Cleanroom Suite nominal",
   totalRooms,
   onlineRooms,
   offlineDevicesCount,
   onOpenAlerts
 }) => {
+  const isSingleNode = totalRooms <= 1;
+
   return (
     <div className="flex flex-col justify-between gap-space-md h-full">
       {/* Card 1: Active Warning Alerts */}
       <div
         onClick={onOpenAlerts}
-        className="cursor-pointer rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer"
+        className="cursor-pointer rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer border-cyan-200/40 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.06),0_0_15px_rgba(0,229,255,0.04)]"
       >
         <div className="flex items-start gap-space-md min-w-0">
           <div className={`w-12 h-12 rounded-2xl p-0.5 border flex items-center justify-center shrink-0 shadow-inner ${
             activeAlertsCount > 0
               ? 'bg-purple-50/90 border-purple-200/80 shadow-[inset_0_2px_4px_rgba(147,51,234,0.15)]'
-              : 'bg-emerald-50/90 border-emerald-200/80 shadow-[inset_0_2px_4px_rgba(16,185,129,0.15)]'
+              : 'bg-cyan-50/90 border-cyan-200/80 shadow-[0_0_12px_rgba(0,229,255,0.2)]'
           }`}>
             <span className={`material-symbols-outlined text-2xl ${
-              activeAlertsCount > 0 ? 'text-purple-600 drop-shadow-[0_0_8px_rgba(147,51,234,0.4)]' : 'text-emerald-600 drop-shadow-[0_0_6px_rgba(16,185,129,0.3)]'
+              activeAlertsCount > 0 ? 'text-purple-600 drop-shadow-[0_0_8px_rgba(147,51,234,0.4)]' : 'text-cyan-600 drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]'
             }`}>
               {activeAlertsCount > 0 ? 'warning' : 'verified_user'}
             </span>
@@ -42,92 +44,92 @@ export const StatChips: React.FC<StatChipsProps> = ({
                 {activeAlertsCount} {activeAlertsCount === 1 ? 'Warning' : 'Alerts'}
               </span>
               <span className={`w-2 h-2 rounded-full ${
-                activeAlertsCount > 0 ? 'bg-purple-600 shadow-[0_0_8px_rgba(147,51,234,0.8)] animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]'
+                activeAlertsCount > 0 ? 'bg-purple-600 shadow-[0_0_8px_rgba(147,51,234,0.8)] animate-pulse' : 'bg-cyan-500 shadow-[0_0_8px_rgba(0,229,255,0.8)]'
               }`} />
             </div>
             <span className="font-body-md text-sm text-slate-800 font-medium mt-0.5 truncate max-w-xs">
-              {activeAlertsCount > 0 ? latestAlertMessage : 'All Clinical Zones Nominal'}
+              {activeAlertsCount > 0 ? latestAlertMessage : 'Kongu Cleanroom Nominal'}
             </span>
             <span className="font-label-sm text-xs text-slate-500">
               {activeAlertsCount > 0 ? 'Click to inspect trigger benchmarks' : 'Zero unacknowledged bio-hazard events'}
             </span>
           </div>
         </div>
-        <button className="w-9 h-9 rounded-xl skeuo-button flex items-center justify-center shrink-0 ml-2 text-slate-600 group-hover:text-teal-700">
+        <button className="w-9 h-9 rounded-xl skeuo-button flex items-center justify-center shrink-0 ml-2 text-slate-600 group-hover:text-cyan-700">
           <span className="material-symbols-outlined text-lg">arrow_forward</span>
         </button>
       </div>
 
       {/* Card 2: Rooms Coverage & Online Stat */}
-      <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer">
+      <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer border-cyan-200/40 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.06),0_0_15px_rgba(0,229,255,0.04)]">
         <div className="flex items-start gap-space-md">
-          <div className="w-12 h-12 rounded-2xl bg-teal-50/90 p-0.5 border border-teal-200/80 shadow-[inset_0_2px_4px_rgba(13,148,136,0.15)] flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-teal-600 text-2xl drop-shadow-[0_0_8px_rgba(13,148,136,0.4)]">
+          <div className="w-12 h-12 rounded-2xl bg-cyan-50/90 p-0.5 border border-cyan-200/80 shadow-[0_0_12px_rgba(0,229,255,0.25)] flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-cyan-600 text-2xl drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]">
               domain_verification
             </span>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <span className="font-headline-md text-2xl font-light text-slate-900 tabular-nums">
-                {onlineRooms} / {totalRooms} Online
+                {isSingleNode ? 'Node 01 Online' : `${onlineRooms} / ${totalRooms} Online`}
               </span>
               <span className={`w-2 h-2 rounded-full ${
-                onlineRooms === totalRooms
-                  ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]'
+                onlineRooms >= totalRooms
+                  ? 'bg-cyan-500 shadow-[0_0_8px_rgba(0,229,255,0.8)]'
                   : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]'
               }`} />
             </div>
             <span className="font-body-md text-sm text-slate-800 font-medium mt-0.5 tabular-nums">
-              {Math.round((onlineRooms / (totalRooms || 1)) * 100)}% Telemetry Coverage
+              {isSingleNode ? '100% Real-Time Node Telemetry' : `${Math.round((onlineRooms / (totalRooms || 1)) * 100)}% Telemetry Coverage`}
             </span>
             <span className="font-label-sm text-xs text-slate-500">
-              Laminar Pressure & Cleanroom Stream Sync
+              Laminar Pressure & Kongu Node Stream Sync
             </span>
           </div>
         </div>
         <div className="flex flex-col items-end">
-          <span className="font-label-mono text-[10px] text-teal-800 bg-teal-50/90 border border-teal-200/80 px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap shadow-sm">
-            {onlineRooms === totalRooms ? 'ALL NODES ACTIVE' : `${totalRooms - onlineRooms} DEGRADED`}
+          <span className="font-label-mono text-[10px] text-cyan-800 bg-cyan-50/90 border border-cyan-200/80 px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap shadow-[0_0_8px_rgba(0,229,255,0.15)]">
+            {isSingleNode ? 'KONGU NODE 01 ACTIVE' : (onlineRooms === totalRooms ? 'ALL NODES ACTIVE' : `${totalRooms - onlineRooms} DEGRADED`)}
           </span>
         </div>
       </div>
 
       {/* Card 3: Devices Offline & HVAC Scrubbers */}
-      <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer">
+      <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer border-cyan-200/40 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.06),0_0_15px_rgba(0,229,255,0.04)]">
         <div className="flex items-start gap-space-md">
           <div className={`w-12 h-12 rounded-2xl p-0.5 border flex items-center justify-center shrink-0 shadow-inner ${
-            offlineDevicesCount > 0
+            offlineDevicesCount > 0 && !isSingleNode
               ? 'bg-rose-50/90 border-rose-200/80 shadow-[inset_0_2px_4px_rgba(244,63,94,0.15)]'
-              : 'bg-sky-50/90 border-sky-200/80 shadow-[inset_0_2px_4px_rgba(2,132,199,0.15)]'
+              : 'bg-blue-50/90 border-blue-200/80 shadow-[0_0_12px_rgba(2,132,199,0.2)]'
           }`}>
             <span className={`material-symbols-outlined text-2xl ${
-              offlineDevicesCount > 0 ? 'text-rose-600' : 'text-sky-600 drop-shadow-[0_0_8px_rgba(2,132,199,0.4)]'
+              offlineDevicesCount > 0 && !isSingleNode ? 'text-rose-600' : 'text-blue-600 drop-shadow-[0_0_8px_rgba(2,132,199,0.4)]'
             }`}>
-              {offlineDevicesCount > 0 ? 'wifi_off' : 'cyclone'}
+              {offlineDevicesCount > 0 && !isSingleNode ? 'wifi_off' : 'memory'}
             </span>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <span className="font-headline-md text-2xl font-light text-slate-900 tabular-nums">
-                {offlineDevicesCount > 0 ? `${offlineDevicesCount} Device Offline` : '99.4% Efficiency'}
+                {isSingleNode || offlineDevicesCount === 0 ? 'ESP32 Link Active' : `${offlineDevicesCount} Device Offline`}
               </span>
               <span className={`w-2 h-2 rounded-full ${
-                offlineDevicesCount > 0
+                offlineDevicesCount > 0 && !isSingleNode
                   ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]'
-                  : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]'
+                  : 'bg-cyan-500 shadow-[0_0_8px_rgba(0,229,255,0.8)]'
               }`} />
             </div>
             <span className="font-body-md text-sm text-slate-800 font-medium mt-0.5">
-              {offlineDevicesCount > 0 ? 'Heartbeat timed out (>60s)' : 'Filtration & HVAC Sync'}
+              {isSingleNode || offlineDevicesCount === 0 ? 'ESP32-DEVKITV1 · 80 MHz Modem Sleep' : 'Heartbeat timed out (>60s)'}
             </span>
             <span className="font-label-sm text-xs text-slate-500">
-              {offlineDevicesCount > 0 ? 'Check ESP32 sensor power / WiFi' : 'All 6 multistage scrubbers operating'}
+              DHT22 · MQ-135 · GP2Y1010AU0F
             </span>
           </div>
         </div>
         <div className="flex flex-col items-end">
-          <span className="font-label-mono text-[11px] text-sky-700 font-bold tabular-nums">
-            {offlineDevicesCount > 0 ? 'ATTN' : '4,620 CFM'}
+          <span className="font-label-mono text-[11px] text-blue-700 font-bold tabular-nums">
+            115200 BAUD
           </span>
         </div>
       </div>

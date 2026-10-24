@@ -12,7 +12,7 @@ export const AlertsView: React.FC<AlertsViewProps> = ({
   onAcknowledge,
   onClose
 }) => {
-  const [severityFilter, setSeverityFilter] = useState<'all' | 'warning' | 'critical'>('all');
+  const [severityFilter, setSeverityFilter] = useState<'all' | 'warning' | 'critical' | 'info'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'unacknowledged' | 'acknowledged'>('all');
   const [search, setSearch] = useState('');
 

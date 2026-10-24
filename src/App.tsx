@@ -57,18 +57,18 @@ export const App: React.FC = () => {
   const primaryRoom = rooms.icu || roomList[0] || null;
 
   return (
-    <div className="bg-[#f8fafc] font-body-md text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-teal-100 selection:text-teal-900">
-      {/* Ambient Atmospheric Fluid Gradient Orbs & Cleanroom Air Particles */}
+    <div className="bg-[#f8fafc] font-body-md text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-cyan-100 selection:text-cyan-900">
+      {/* Ambient Atmospheric Fluid Gradient Orbs & Cleanroom Air Particles with Neon Blue Accents */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-40 left-10 w-[640px] h-[640px] bg-teal-400/15 rounded-full blur-[140px]" />
-        <div className="absolute top-1/3 -right-20 w-[580px] h-[580px] bg-sky-400/15 rounded-full blur-[160px]" />
-        <div className="absolute -bottom-20 left-1/4 w-[600px] h-[600px] bg-purple-400/12 rounded-full blur-[150px]" />
-        <div className="absolute top-2/3 left-10 w-[420px] h-[420px] bg-emerald-400/12 rounded-full blur-[130px]" />
-        {/* Living Cleanroom Atmosphere Micro-Motes */}
-        <div className="cleanroom-particle absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-teal-400/40 blur-[0.5px]" style={{ animationDelay: '0s' }} />
-        <div className="cleanroom-particle absolute top-1/2 right-1/4 w-2 h-2 rounded-full bg-sky-400/35 blur-[0.5px]" style={{ animationDelay: '2.5s' }} />
-        <div className="cleanroom-particle absolute bottom-1/3 left-1/3 w-1 h-1 rounded-full bg-emerald-400/50 blur-[0.5px]" style={{ animationDelay: '4.5s' }} />
-        <div className="cleanroom-particle absolute top-3/4 right-1/3 w-1.5 h-1.5 rounded-full bg-teal-300/40 blur-[0.5px]" style={{ animationDelay: '1.2s' }} />
+        <div className="absolute -top-40 left-10 w-[640px] h-[640px] bg-cyan-400/20 rounded-full blur-[140px]" />
+        <div className="absolute top-1/3 -right-20 w-[580px] h-[580px] bg-blue-500/18 rounded-full blur-[160px]" />
+        <div className="absolute -bottom-20 left-1/4 w-[600px] h-[600px] bg-cyan-600/15 rounded-full blur-[150px]" />
+        <div className="absolute top-2/3 left-10 w-[420px] h-[420px] bg-sky-400/18 rounded-full blur-[130px]" />
+        {/* Living Cleanroom Atmosphere Micro-Motes in Neon Blue */}
+        <div className="cleanroom-particle absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" style={{ animationDelay: '0s' }} />
+        <div className="cleanroom-particle absolute top-1/2 right-1/4 w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_#38bdf8]" style={{ animationDelay: '2.5s' }} />
+        <div className="cleanroom-particle absolute bottom-1/3 left-1/3 w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_#00e5ff]" style={{ animationDelay: '4.5s' }} />
+        <div className="cleanroom-particle absolute top-3/4 right-1/3 w-2 h-2 rounded-full bg-sky-300 shadow-[0_0_8px_#0284c7]" style={{ animationDelay: '1.2s' }} />
       </div>
 
       {/* Navigation Shell (Desktop Dock & Header, Mobile Top & Glass Bottom Nav) */}
@@ -110,21 +110,21 @@ export const App: React.FC = () => {
                 {/* 1. Top Global Metrics & Physical Gauge Pod */}
                 <section className="grid grid-cols-1 xl:grid-cols-12 gap-gutter items-stretch mb-space-xl">
                   {/* Central Bio-Aura AQI Dial Card (7 Cols) */}
-                  <div className="xl:col-span-7 rounded-[26px] glass-panel shimmer-effect p-space-lg relative overflow-hidden flex flex-col justify-between gpu-layer">
-                    <div className="absolute -right-20 -top-20 w-80 h-80 bg-teal-400/10 rounded-full blur-[80px] pointer-events-none" />
+                  <div className="xl:col-span-7 rounded-[26px] glass-panel shimmer-effect p-space-lg relative overflow-hidden flex flex-col justify-between gpu-layer border-cyan-200/50 shadow-[0_15px_40px_-5px_rgba(2,132,199,0.08),0_0_25px_rgba(0,229,255,0.06),inset_0_1px_0_0_rgba(255,255,255,1)]">
+                    <div className="absolute -right-20 -top-20 w-80 h-80 bg-cyan-400/12 rounded-full blur-[80px] pointer-events-none" />
 
                     {/* Pod Header */}
                     <div className="flex items-center justify-between relative z-10 flex-wrap gap-2">
                       <div className="flex items-center gap-space-sm">
-                        <span className="w-2.5 h-2.5 rounded-full bg-teal-500 shadow-[0_0_12px_rgba(20,184,166,0.8)] animate-pulse" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_12px_rgba(0,229,255,0.9)] animate-pulse" />
                         <span className="font-label-mono text-label-mono uppercase tracking-widest text-slate-500 font-semibold text-xs">
-                          Telemetry Station · Bio-Shield Alpha
+                          Kongu Telemetry Station · Node 01
                         </span>
                       </div>
-                      <div className="px-space-md py-1 rounded-full bg-emerald-50/90 border border-emerald-200/80 shadow-[inset_0_1px_2px_rgba(16,185,129,0.12)] flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                        <span className="font-label-mono text-[10px] text-emerald-800 tracking-wider uppercase font-bold">
-                          Class I Bio-Safety Standard
+                      <div className="px-space-md py-1 rounded-full bg-cyan-50/90 border border-cyan-200/80 shadow-[0_0_10px_rgba(0,229,255,0.15)] flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(0,229,255,0.8)]" />
+                        <span className="font-label-mono text-[10px] text-cyan-800 tracking-wider uppercase font-bold">
+                          Kongu Hospital · ENIYAN Project
                         </span>
                       </div>
                     </div>
@@ -133,22 +133,22 @@ export const App: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-space-lg items-center my-space-md relative z-10">
                       {/* Physical Machined Circular Gauge Frame */}
                       <div className="md:col-span-6 flex justify-center items-center py-2">
-                        <AqiDial score={compositeAQI} color={aqiColor} size="normal" />
+                        <AqiDial score={compositeAQI} color={aqiColor} size="normal" targetLabel="KONGU CLEANROOM · NODE 01" />
                       </div>
 
                       {/* Metric Readout Column */}
                       <div className="md:col-span-6 flex flex-col justify-center">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-label-mono text-label-mono text-teal-700 uppercase tracking-wider font-semibold text-xs">
-                            Composite Atmosphere
+                          <span className="font-label-mono text-label-mono text-cyan-800 uppercase tracking-wider font-semibold text-xs">
+                            Kongu Atmosphere · Node 01
                           </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-label-mono font-bold bg-teal-50 text-teal-700 border border-teal-200 shadow-sm">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-label-mono font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 shadow-sm">
                             LIVE SCAN
                           </span>
                         </div>
 
                         {/* Skeuomorphic Recessed Readout Plate */}
-                        <div className="my-2 p-4 rounded-2xl glass-inset flex flex-col justify-center relative overflow-hidden">
+                        <div className="my-2 p-4 rounded-2xl glass-inset flex flex-col justify-center relative overflow-hidden border border-cyan-200/50">
                           <div className="flex items-baseline gap-space-sm">
                             <span className="font-label-numeric-lg text-5xl md:text-[68px] leading-none text-slate-900 font-light tracking-tight tabular-nums">
                               {compositeAQI}
@@ -160,7 +160,7 @@ export const App: React.FC = () => {
                           <div className="flex items-center gap-2 mt-2">
                             <div
                               className="h-2.5 w-2.5 rounded-full shadow-sm"
-                              style={{ backgroundColor: aqiColor, boxShadow: `0 0 8px ${aqiColor}` }}
+                              style={{ backgroundColor: aqiColor, boxShadow: `0 0 10px ${aqiColor}` }}
                             />
                             <span
                               className="font-label-sm text-xs font-bold uppercase tracking-wider"
@@ -172,7 +172,7 @@ export const App: React.FC = () => {
                         </div>
 
                         <p className="font-body-md text-sm text-slate-600 mt-2 max-w-sm">
-                          Operating conditions nominal across hospital suites. Laminar air displacement stabilized with zero cytotoxic particle incursions detected.
+                          Operating conditions nominal for Kongu Hospital cleanroom suite. Live ESP32 telemetry streaming from DHT22, MQ-135, and GP2Y1010AU0F optical dust sensor.
                         </p>
                       </div>
                     </div>
@@ -181,16 +181,16 @@ export const App: React.FC = () => {
                     <div className="pt-space-md mt-space-sm border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-space-md text-slate-500 text-xs">
                       <div className="flex items-center gap-space-md">
                         <div className="flex items-center gap-1.5">
-                          <span className="material-symbols-outlined text-base text-teal-600">air</span>
+                          <span className="material-symbols-outlined text-base text-cyan-600">air</span>
                           <span className="font-label-mono text-slate-700 font-medium tabular-nums">Velocity: 0.42 m/s</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <span className="material-symbols-outlined text-base text-sky-600">compress</span>
-                          <span className="font-label-mono text-slate-700 font-medium tabular-nums">Pressure: +24.8 Pa</span>
+                          <span className="material-symbols-outlined text-base text-blue-600">compress</span>
+                          <span className="font-label-mono text-slate-700 font-medium tabular-nums">Pressure: -14.2 Pa</span>
                         </div>
                       </div>
                       <span className="font-label-mono text-slate-400">
-                        Calibration ISO 14644-1 Compliant
+                        Kongu ECE Mini Project · ENIYAN
                       </span>
                     </div>
                   </div>

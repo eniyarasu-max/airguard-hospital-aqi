@@ -101,15 +101,12 @@ export function useRooms() {
             };
           });
 
-          // If only ICU is real hardware, merge simulated rooms for the other 5 units
-          // "Only the ICU should be a real unit; the others are simulated."
-          if (!parsedRooms.ot && INITIAL_MOCK_ROOMS.ot) parsedRooms.ot = INITIAL_MOCK_ROOMS.ot;
-          if (!parsedRooms.ward && INITIAL_MOCK_ROOMS.ward) parsedRooms.ward = INITIAL_MOCK_ROOMS.ward;
-          if (!parsedRooms.pharmacy && INITIAL_MOCK_ROOMS.pharmacy) parsedRooms.pharmacy = INITIAL_MOCK_ROOMS.pharmacy;
-          if (!parsedRooms.waiting && INITIAL_MOCK_ROOMS.waiting) parsedRooms.waiting = INITIAL_MOCK_ROOMS.waiting;
-          if (!parsedRooms.lab && INITIAL_MOCK_ROOMS.lab) parsedRooms.lab = INITIAL_MOCK_ROOMS.lab;
-
-          setRooms(parsedRooms);
+          // Clean single-node presentation for Kongu Hospital Mini Project
+          if (Object.keys(parsedRooms).length === 0) {
+            setRooms(INITIAL_MOCK_ROOMS);
+          } else {
+            setRooms(parsedRooms);
+          }
         } else {
           // Empty state: default with mock rooms so UI doesn't break
           setRooms(INITIAL_MOCK_ROOMS);
