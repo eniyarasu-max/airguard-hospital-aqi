@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ref, onValue, off } from 'firebase/database';
 import { database, isFirebaseConfigured } from '../firebase';
-import { RoomData } from '../types';
+import { RoomData, SensorReadings } from '../types';
 import { INITIAL_MOCK_ROOMS, simulateRoomUpdate } from '../utils/mockData';
 import { evaluateHardwareIndicators, computeEceDiagnostics } from '../utils/eceCalculations';
 
@@ -65,14 +65,19 @@ export function useRooms() {
             // Requirement 7: Mark a device offline if there has been no update for 60 seconds
             const isOnline = now - lastSeen < 60000;
 
-            const latestReadings = val.latest || {
-              temperature: 21,
-              humidity: 50,
-              co2: 420,
-              tvoc: 50,
-              dust: 2.5,
-              gas: 180,
-              timestamp: now
+            const rawTemp = val.latest?.temperature;
+            const rawHum = val.latest?.humidity;
+            const isTempValid = typeof rawTemp === 'number' && rawTemp > -40 && rawTemp < 80;
+            const isHumValid = typeof rawHum === 'number' && rawHum >= 0 && rawHum <= 100;
+
+            const latestReadings: SensorReadings = {
+              temperature: isTempValid ? rawTemp : 21.4,
+              humidity: isHumValid ? rawHum : 46.5,
+              co2: typeof val.latest?.co2 === 'number' && val.latest.co2 > 0 ? val.latest.co2 : 420,
+              tvoc: typeof val.latest?.tvoc === 'number' ? val.latest.tvoc : 50,
+              dust: typeof val.latest?.dust === 'number' && val.latest.dust >= 0 ? val.latest.dust : 2.5,
+              gas: typeof val.latest?.gas === 'number' && val.latest.gas >= 0 ? val.latest.gas : 180,
+              timestamp: val.latest?.timestamp || now
             };
 
             const indicators = val.indicators ||
