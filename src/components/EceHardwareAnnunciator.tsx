@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RoomData, HardwareIndicators, EceDiagnostics } from '../types';
 import { evaluateHardwareIndicators, computeEceDiagnostics } from '../utils/eceCalculations';
+import { useThresholds } from '../context/ThresholdContext';
 
 interface EceHardwareAnnunciatorProps {
   room: RoomData | null;
 }
 
 export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ room }) => {
+  const { thresholds } = useThresholds();
   const [audioMuted, setAudioMuted] = useState<boolean>(true);
   const [isTestAlarmActive, setIsTestAlarmActive] = useState<boolean>(false);
   const [showCircuitPinout, setShowCircuitPinout] = useState<boolean>(false);
@@ -14,12 +16,13 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
 
-  // Compute live readings and indicators
+  // Compute live readings and indicators using dynamic hospital thresholds
   const latest = room?.latest;
-  const indicators: HardwareIndicators = room?.indicators || (latest?.indicators) || evaluateHardwareIndicators(
+  const indicators: HardwareIndicators = evaluateHardwareIndicators(
     latest?.co2 ?? 420,
     latest?.dust ?? 5.0,
-    latest?.gas ?? 380
+    latest?.gas ?? 380,
+    { co2Max: thresholds.co2Max, dustMax: thresholds.dustMax, gasMax: thresholds.gasMax }
   );
 
   const ece: EceDiagnostics = room?.ece || (latest?.ece) || computeEceDiagnostics(latest || {});

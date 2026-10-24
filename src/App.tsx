@@ -17,6 +17,8 @@ import { SettingsView } from './components/SettingsView';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { EceHardwareAnnunciator } from './components/EceHardwareAnnunciator';
 import { CustomCursor } from './components/CustomCursor';
+import { AirGuardChatbot } from './components/AirGuardChatbot';
+import { useThresholds } from './context/ThresholdContext';
 import { playNodeConnectionChime } from './utils/audioChimes';
 
 export const App: React.FC = () => {
@@ -25,10 +27,11 @@ export const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showConnectionToast, setShowConnectionToast] = useState<boolean>(false);
 
+  const { thresholds } = useThresholds();
   const { rooms, loading: roomsLoading, error: roomsError, demoMode, toggleDemoMode } = useRooms();
   const { alerts, acknowledgeAlert } = useAlerts(rooms, demoMode);
   const { controls, updateControl } = useControl(rooms, demoMode);
-  const { compositeAQI, color: aqiColor, label: aqiLabel } = useAQI(rooms);
+  const { compositeAQI, color: aqiColor, label: aqiLabel } = useAQI(rooms, undefined, thresholds);
 
   const filteredRooms = useMemo(() => {
     if (!searchQuery.trim()) return rooms;
@@ -402,7 +405,12 @@ export const App: React.FC = () => {
 
             {currentTab === 'settings' && (
               <div className="animate-startup-1">
-                <SettingsView demoMode={demoMode} onToggleDemoMode={toggleDemoMode} />
+                <SettingsView
+                  demoMode={demoMode}
+                  onToggleDemoMode={toggleDemoMode}
+                  room={primaryRoom}
+                  compositeAQI={compositeAQI}
+                />
               </div>
             )}
           </>
@@ -415,6 +423,15 @@ export const App: React.FC = () => {
           onClose={() => setSelectedRoomId(null)}
         />
       )}
+
+      {/* Floating AirGuard AI Hospital Telemetry Chatbot */}
+      <AirGuardChatbot
+        room={primaryRoom}
+        compositeAQI={compositeAQI}
+        aqiLabel={aqiLabel}
+        nodeOnline={isNodeOnline}
+        unackAlertsCount={unackAlerts.length}
+      />
     </div>
   );
 };

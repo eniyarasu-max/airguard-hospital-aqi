@@ -108,8 +108,13 @@ function calculateRangeSubscore(value: number, minIdeal: number, maxIdeal: numbe
  * - Moderate (50 - 79): Amber   (#d97706) - Advisory / Throttle HVAC
  * - Poor (< 50):       Red     (#dc2626) - Clinical Alert / Contamination Breach
  */
-export function computeAQI(readings: SensorReadings, zone: ZoneType = 'general'): AQIResult {
-  const limits = ZONE_THRESHOLDS[zone] || ZONE_THRESHOLDS.general;
+export function computeAQI(
+  readings: SensorReadings,
+  zone: ZoneType = 'general',
+  customThresholds?: Partial<ZoneThresholds>
+): AQIResult {
+  const baseLimits = ZONE_THRESHOLDS[zone] || ZONE_THRESHOLDS.general;
+  const limits = customThresholds ? { ...baseLimits, ...customThresholds } : baseLimits;
 
   // 1. CO2 Subscore (Baseline: 400 ppm atmospheric background)
   const co2Score = calculateContaminantSubscore(readings.co2 || 400, 420, limits.co2Max);

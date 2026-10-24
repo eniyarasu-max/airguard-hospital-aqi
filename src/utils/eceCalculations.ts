@@ -82,10 +82,20 @@ export function computeEceDiagnostics(reading: Partial<SensorReadings>): EceDiag
 export function evaluateHardwareIndicators(
   co2Ppm: number,
   dustDensity: number,
-  rawGas?: number
+  rawGas?: number,
+  customThresholds?: { co2Max?: number; dustMax?: number; gasMax?: number }
 ): HardwareIndicators {
-  const isHazard = co2Ppm > 1200 || dustDensity > 50 || (rawGas !== undefined && rawGas > 2000);
-  const isCaution = !isHazard && (co2Ppm > 800 || dustDensity > 25 || (rawGas !== undefined && rawGas > 1000));
+  const co2Caution = customThresholds?.co2Max ?? 800;
+  const co2Hazard = Math.round(co2Caution * 1.35);
+
+  const dustCaution = customThresholds?.dustMax ?? 25;
+  const dustHazard = Math.round(dustCaution * 1.6);
+
+  const gasCaution = customThresholds?.gasMax ?? 1000;
+  const gasHazard = Math.round(gasCaution * 1.6);
+
+  const isHazard = co2Ppm > co2Hazard || dustDensity > dustHazard || (rawGas !== undefined && rawGas > gasHazard);
+  const isCaution = !isHazard && (co2Ppm > co2Caution || dustDensity > dustCaution || (rawGas !== undefined && rawGas > gasCaution));
 
   if (isHazard) {
     return {

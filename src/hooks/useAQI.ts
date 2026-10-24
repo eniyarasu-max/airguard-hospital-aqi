@@ -1,8 +1,12 @@
 import { useMemo } from 'react';
-import { RoomData, AQIResult } from '../types';
+import { RoomData, AQIResult, ZoneThresholds } from '../types';
 import { computeAQI } from '../utils/aqi';
 
-export function useAQI(rooms: Record<string, RoomData>, selectedRoomId?: string) {
+export function useAQI(
+  rooms: Record<string, RoomData>,
+  selectedRoomId?: string,
+  customThresholds?: Partial<ZoneThresholds>
+) {
   return useMemo(() => {
     const roomList = Object.values(rooms);
     if (roomList.length === 0) {
@@ -20,7 +24,7 @@ export function useAQI(rooms: Record<string, RoomData>, selectedRoomId?: string)
     let totalScore = 0;
 
     roomList.forEach((r) => {
-      const res = computeAQI(r.latest, r.zone);
+      const res = computeAQI(r.latest, r.zone, customThresholds);
       roomAQIs[r.id] = res;
       totalScore += res.score;
     });
@@ -33,7 +37,8 @@ export function useAQI(rooms: Record<string, RoomData>, selectedRoomId?: string)
     const finalScore = targetAQI ? targetAQI.score : avgScore;
     const finalResult = targetAQI ? targetAQI : computeAQI(
       roomList[0].latest,
-      'general'
+      'general',
+      customThresholds
     );
 
     return {
@@ -44,5 +49,5 @@ export function useAQI(rooms: Record<string, RoomData>, selectedRoomId?: string)
       activeRoom: targetRoom,
       roomAQIs
     };
-  }, [rooms, selectedRoomId]);
+  }, [rooms, selectedRoomId, customThresholds]);
 }
