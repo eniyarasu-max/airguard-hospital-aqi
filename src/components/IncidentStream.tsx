@@ -118,7 +118,7 @@ export const IncidentStream: React.FC<IncidentStreamProps> = ({
               ) : (
                 <button
                   onClick={() => onAcknowledge(alert.alertId)}
-                  className="shrink-0 px-space-md py-2 rounded-xl text-slate-800 font-label-mono text-xs font-semibold shadow-[0_2px_6px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] hover:bg-slate-50 border border-slate-200 active:shadow-[inset_0_2px_4px_rgba(15,23,42,0.1)] active:translate-y-0.5 transition-all self-start sm:self-auto"
+                  className="shrink-0 px-space-md py-2 rounded-xl text-slate-800 font-label-mono text-xs font-semibold shadow-[0_2px_6px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] hover:bg-slate-50 border border-slate-200 active:scale-95 transition-all self-start sm:self-auto cursor-pointer"
                   style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)' }}
                 >
                   Acknowledge
@@ -135,7 +135,7 @@ export const IncidentStream: React.FC<IncidentStreamProps> = ({
         </span>
         <button
           onClick={downloadCSV}
-          className="text-teal-700 font-semibold hover:underline flex items-center gap-1"
+          className="text-cyan-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer active:scale-95 transition-transform"
         >
           <span className="material-symbols-outlined text-sm">download</span>
           Download Hospital CSV

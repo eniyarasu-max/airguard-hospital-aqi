@@ -25,9 +25,8 @@ export const SensorTile: React.FC<SensorTileProps> = ({
   trendLabel,
   trendPositive = true,
   sparklineData,
-  color = '#0d9488'
+  color = '#0284c7'
 }) => {
-  // Generate a smooth SVG path from sparkline points or default wave
   const points = sparklineData && sparklineData.length >= 4
     ? sparklineData
     : [18, 12, 15, 8, 14, 10];
@@ -36,7 +35,6 @@ export const SensorTile: React.FC<SensorTileProps> = ({
   const maxVal = Math.max(...points) || 1;
   const range = maxVal - minVal || 1;
 
-  // Map points to SVG coordinates (viewBox 0 0 100 24)
   const coords = points.map((p, idx) => {
     const x = (idx / (points.length - 1)) * 100;
     const y = 20 - ((p - minVal) / range) * 16;
@@ -47,7 +45,7 @@ export const SensorTile: React.FC<SensorTileProps> = ({
   const areaD = `${pathD} L 100,24 L 0,24 Z`;
 
   const toneClasses = {
-    teal: 'bg-teal-50/90 border-teal-200/80 text-teal-800 shadow-[inset_0_1px_1px_rgba(20,184,166,0.1)]',
+    teal: 'bg-cyan-50/90 border-cyan-200/80 text-cyan-800 shadow-[inset_0_1px_1px_rgba(0,229,255,0.1)]',
     sky: 'bg-sky-50/90 border-sky-200/80 text-sky-800 shadow-[inset_0_1px_1px_rgba(14,165,233,0.1)]',
     amber: 'bg-amber-50/90 border-amber-200/80 text-amber-800 shadow-[inset_0_1px_1px_rgba(245,158,11,0.1)]',
     rose: 'bg-rose-50/90 border-rose-200/80 text-rose-800 shadow-[inset_0_1px_1px_rgba(244,63,94,0.1)]'
@@ -56,10 +54,9 @@ export const SensorTile: React.FC<SensorTileProps> = ({
   const gradientId = `spark_${label.replace(/\s+/g, '_')}`;
 
   return (
-    <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex flex-col justify-between group relative overflow-hidden gpu-layer">
-      {/* Top Header */}
+    <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex flex-col justify-between group relative overflow-hidden gpu-layer border-cyan-200/30 hover:border-cyan-300/60 transition-all duration-300 hover:scale-[1.015]">
       <div className="flex items-center justify-between relative z-10">
-        <div className="w-8 h-8 rounded-lg bg-slate-100/80 border border-slate-200/60 flex items-center justify-center text-slate-500 group-hover:text-teal-700 group-hover:border-teal-200 group-hover:bg-teal-50/50 transition-all">
+        <div className="w-8 h-8 rounded-lg bg-slate-100/80 border border-slate-200/60 flex items-center justify-center text-slate-500 group-hover:text-cyan-700 group-hover:border-cyan-200 group-hover:bg-cyan-50/50 transition-all">
           <span className="material-symbols-outlined text-lg">
             {icon}
           </span>
@@ -69,7 +66,6 @@ export const SensorTile: React.FC<SensorTileProps> = ({
         </span>
       </div>
 
-      {/* Main Metric Value */}
       <div className="my-3 relative z-10">
         <div className="font-label-sm text-label-sm text-slate-500 font-medium tracking-tight">
           {label}
@@ -84,7 +80,6 @@ export const SensorTile: React.FC<SensorTileProps> = ({
         </div>
       </div>
 
-      {/* Skeuomorphic Recessed Sparkline Well */}
       <div className="w-full h-9 rounded-xl glass-inset px-2 py-1 flex items-end relative overflow-hidden mb-2">
         <svg className="w-full h-6 overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 24">
           <defs>
@@ -98,10 +93,9 @@ export const SensorTile: React.FC<SensorTileProps> = ({
         </svg>
       </div>
 
-      {/* Bottom Range Reference */}
       <div className="flex items-center justify-between text-[11px] font-label-mono text-slate-400 pt-2 border-t border-slate-100/80 relative z-10">
         <span className="truncate max-w-[120px]">{rangeLabel}</span>
-        <span className={`font-semibold ${trendPositive ? 'text-teal-700' : 'text-slate-500'}`}>
+        <span className={`font-semibold ${trendPositive ? 'text-cyan-700' : 'text-slate-500'}`}>
           {trendLabel}
         </span>
       </div>

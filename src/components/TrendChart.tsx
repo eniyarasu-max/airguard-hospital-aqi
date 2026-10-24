@@ -101,14 +101,14 @@ export const TrendChart: React.FC<TrendChartProps> = ({ rooms, selectedRoomId })
               <button
                 key={tf}
                 onClick={() => setTimeframe(tf)}
-                className={`px-3.5 py-1.5 rounded-lg font-label-mono text-xs transition-all duration-200 ${
+                className={`px-3.5 py-1.5 rounded-lg font-label-mono text-xs transition-all duration-200 cursor-pointer active:scale-95 ${
                   isActive
-                    ? 'bg-white text-teal-700 font-semibold shadow-[0_2px_6px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,1)] flex items-center gap-1.5 border border-slate-200/50'
+                    ? 'bg-white text-cyan-700 font-semibold shadow-[0_2px_6px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,1)] flex items-center gap-1.5 border border-slate-200/50'
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-600 shadow-[0_0_6px_rgba(13,148,136,0.6)]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 shadow-[0_0_6px_#00e5ff]" />
                 )}
                 {tf}
               </button>

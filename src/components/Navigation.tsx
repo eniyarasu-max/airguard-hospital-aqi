@@ -18,16 +18,14 @@ export const Navigation: React.FC<NavigationProps> = ({
   onSelectTab,
   unacknowledgedAlertsCount,
   demoMode,
-  onToggleDemoMode,
   searchQuery,
   onSearchChange,
   nodeOnline
 }) => {
   return (
     <>
-      {/* ----------------- DESKTOP SIDEBAR DOCK ----------------- */}
+      {/* Desktop Navigation Dock */}
       <aside className="hidden lg:flex fixed left-6 top-6 bottom-6 w-20 z-50 flex-col items-center py-6 glass-panel rounded-[24px] border border-cyan-200/50 shadow-[0_10px_35px_-5px_rgba(2,132,199,0.12),0_0_20px_rgba(0,229,255,0.06),inset_0_1px_0_0_rgba(255,255,255,1)]">
-        {/* Brand Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="p-1 transition-transform duration-300 hover:scale-110 flex items-center justify-center">
             <span className="material-symbols-outlined text-cyan-600 text-3xl font-light drop-shadow-[0_0_10px_rgba(0,229,255,0.5)]">
@@ -37,14 +35,14 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="w-8 h-[1px] bg-cyan-200/60 mt-6" />
         </div>
 
-        {/* Primary Navigation Icons */}
         <nav className="flex-1 flex flex-col items-center gap-space-sm w-full px-3">
-          {/* Dashboard */}
+          {/* Dashboard Tab */}
           <div className="relative group flex justify-center w-full">
             <button
               onClick={() => onSelectTab('dashboard')}
+              aria-label="Dashboard"
               aria-current={currentTab === 'dashboard' ? 'page' : undefined}
-              className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-200 ${
+              className={`w-12 h-12 flex items-center justify-center rounded-xl cursor-pointer active:scale-95 transition-all duration-200 ${
                 currentTab === 'dashboard'
                   ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-[0_4px_18px_rgba(0,229,255,0.45)]'
                   : 'text-slate-500 hover:bg-cyan-50/60 hover:text-cyan-700'
@@ -57,11 +55,12 @@ export const Navigation: React.FC<NavigationProps> = ({
             </div>
           </div>
 
-          {/* Suites & Isolation */}
+          {/* Cleanroom Node Tab */}
           <div className="relative group flex justify-center w-full">
             <button
               onClick={() => onSelectTab('suites')}
-              className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-200 ${
+              aria-label="Cleanroom Node 01"
+              className={`w-12 h-12 flex items-center justify-center rounded-xl cursor-pointer active:scale-95 transition-all duration-200 ${
                 currentTab === 'suites'
                   ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-[0_4px_18px_rgba(0,229,255,0.45)]'
                   : 'text-slate-500 hover:bg-cyan-50/60 hover:text-cyan-700'
@@ -74,14 +73,15 @@ export const Navigation: React.FC<NavigationProps> = ({
             </div>
           </div>
 
-          {/* Active Alerts */}
+          {/* Active Alerts Tab */}
           <div className="relative group flex justify-center w-full">
             <button
               onClick={() => onSelectTab('alerts')}
-              className={`w-12 h-12 flex items-center justify-center rounded-xl relative transition-all duration-200 ${
+              aria-label="Active Alerts"
+              className={`w-12 h-12 flex items-center justify-center rounded-xl relative cursor-pointer active:scale-95 transition-all duration-200 ${
                 currentTab === 'alerts'
-                  ? 'bg-teal-600 text-white shadow-[0_4px_16px_rgba(13,148,136,0.35)]'
-                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-[0_4px_18px_rgba(0,229,255,0.45)]'
+                  : 'text-slate-500 hover:bg-cyan-50/60 hover:text-cyan-700'
               }`}
             >
               <span className="material-symbols-outlined text-2xl">crisis_alert</span>
@@ -94,14 +94,15 @@ export const Navigation: React.FC<NavigationProps> = ({
             </div>
           </div>
 
-          {/* Telemetry Trends */}
+          {/* Telemetry Trends Tab */}
           <div className="relative group flex justify-center w-full">
             <button
               onClick={() => onSelectTab('trends')}
-              className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-200 ${
+              aria-label="Telemetry Trends"
+              className={`w-12 h-12 flex items-center justify-center rounded-xl cursor-pointer active:scale-95 transition-all duration-200 ${
                 currentTab === 'trends'
-                  ? 'bg-teal-600 text-white shadow-[0_4px_16px_rgba(13,148,136,0.35)]'
-                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                  ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-[0_4px_18px_rgba(0,229,255,0.45)]'
+                  : 'text-slate-500 hover:bg-cyan-50/60 hover:text-cyan-700'
               }`}
             >
               <span className="material-symbols-outlined text-2xl">monitoring</span>
@@ -117,10 +118,11 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="w-8 h-[1px] bg-slate-200/80 absolute top-0 left-1/2 -translate-x-1/2" />
           <button
             onClick={() => onSelectTab('settings')}
-            className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-200 ${
+            aria-label="Settings"
+            className={`w-12 h-12 flex items-center justify-center rounded-xl cursor-pointer active:scale-95 transition-all duration-200 ${
               currentTab === 'settings'
-                ? 'bg-teal-600 text-white shadow-[0_4px_16px_rgba(13,148,136,0.35)]'
-                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-[0_4px_18px_rgba(0,229,255,0.45)]'
+                : 'text-slate-500 hover:bg-cyan-50/60 hover:text-cyan-700'
             }`}
           >
             <span className="material-symbols-outlined text-2xl">tune</span>
@@ -131,7 +133,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         </div>
       </aside>
 
-      {/* ----------------- DESKTOP HEADER BAR ----------------- */}
+      {/* Desktop Header */}
       <header className="hidden lg:flex fixed top-6 left-32 right-6 h-20 z-40 items-center justify-between px-space-lg glass-panel rounded-[24px] border border-cyan-200/50 shadow-[0_10px_35px_-5px_rgba(2,132,199,0.1),0_0_20px_rgba(0,229,255,0.08),inset_0_1px_0_0_rgba(255,255,255,1)]">
         <div className="flex items-center gap-space-md">
           <div className="flex flex-col">
@@ -156,7 +158,6 @@ export const Navigation: React.FC<NavigationProps> = ({
         </div>
 
         <div className="flex items-center gap-space-lg">
-          {/* Search Box */}
           <div className="relative flex items-center w-72 h-10 px-space-md rounded-full bg-slate-100/80 border border-slate-200/70 shadow-[inset_0_1px_3px_0_rgba(15,23,42,0.08)]">
             <span className="material-symbols-outlined text-slate-400 text-lg mr-2">
               search
@@ -165,12 +166,11 @@ export const Navigation: React.FC<NavigationProps> = ({
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               className="bg-transparent text-slate-800 placeholder:text-slate-400 font-body-md text-xs w-full focus:outline-none"
-              placeholder="Search Kongu Node 01 telemetry, particulate stats..."
+              placeholder="Search Kongu Node 01 telemetry..."
               type="text"
             />
           </div>
 
-          {/* Operational Status Pill — reflects real ESP32 link state */}
           {demoMode ? (
             <div className="flex items-center gap-space-sm px-space-md py-1.5 rounded-full bg-amber-50/90 border border-amber-200/70 shadow-[0_0_12px_rgba(251,191,36,0.18)]">
               <span className="relative flex h-2.5 w-2.5">
@@ -202,10 +202,10 @@ export const Navigation: React.FC<NavigationProps> = ({
             </div>
           )}
 
-          {/* Notifications Button */}
           <button
             onClick={() => onSelectTab('alerts')}
-            className="relative p-2 rounded-full text-slate-500 hover:text-slate-900 hover:bg-cyan-50/50 transition-colors"
+            aria-label="Alerts"
+            className="relative p-2 rounded-full text-slate-500 hover:text-cyan-700 hover:bg-cyan-50/50 cursor-pointer active:scale-90 transition-all"
           >
             <span className="material-symbols-outlined text-2xl">notifications</span>
             {unacknowledgedAlertsCount > 0 && (
@@ -215,7 +215,6 @@ export const Navigation: React.FC<NavigationProps> = ({
             )}
           </button>
 
-          {/* User Profile - ENIYAN */}
           <div className="flex items-center gap-3 pl-2 border-l border-slate-200/80">
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 ring-2 ring-cyan-400/50 shadow-[0_0_12px_rgba(0,229,255,0.4)] flex items-center justify-center text-white font-black text-xs">
               EN
@@ -232,7 +231,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         </div>
       </header>
 
-      {/* ----------------- MOBILE TOP HEADER ----------------- */}
+      {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 pt-safe bg-white/90 backdrop-blur-xl border-b border-cyan-100 shadow-[0_1px_15px_rgba(0,229,255,0.06)]">
         <div className="h-16 px-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -259,7 +258,8 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onSelectTab('alerts')}
-              className="w-9 h-9 relative flex items-center justify-center rounded-xl bg-white/90 border border-slate-200/70 shadow-sm text-slate-700 hover:text-teal-700 transition-colors"
+              aria-label="Alerts"
+              className="w-9 h-9 relative flex items-center justify-center rounded-xl bg-white/90 border border-slate-200/70 shadow-sm text-slate-700 hover:text-cyan-700 active:scale-90 transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">notifications</span>
               {unacknowledgedAlertsCount > 0 && (
@@ -268,7 +268,8 @@ export const Navigation: React.FC<NavigationProps> = ({
             </button>
             <button
               onClick={() => onSelectTab('settings')}
-              className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/90 border border-slate-200/70 shadow-sm text-slate-700 hover:text-teal-700"
+              aria-label="Settings"
+              className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/90 border border-slate-200/70 shadow-sm text-slate-700 hover:text-cyan-700 active:scale-90 transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">tune</span>
             </button>
@@ -276,15 +277,14 @@ export const Navigation: React.FC<NavigationProps> = ({
         </div>
       </header>
 
-      {/* ----------------- MOBILE GLASS BOTTOM NAVIGATION ----------------- */}
+      {/* Mobile Bottom Navigation */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe px-4 pb-3 pointer-events-none">
         <div className="pointer-events-auto h-16 rounded-full bg-white/90 backdrop-blur-2xl border border-white/90 shadow-[0_12px_32px_-4px_rgba(15,23,42,0.12),0_2px_8px_rgba(15,23,42,0.04)] flex items-center justify-around px-2">
-          {/* Board */}
           <button
             onClick={() => onSelectTab('dashboard')}
-            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 ${
+            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 cursor-pointer ${
               currentTab === 'dashboard'
-                ? "text-teal-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-teal-600 after:shadow-[0_0_6px_#0d9488]"
+                ? "text-cyan-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-cyan-600 after:shadow-[0_0_6px_#00e5ff]"
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
@@ -292,12 +292,11 @@ export const Navigation: React.FC<NavigationProps> = ({
             <span className="font-label-mono text-[9px] tracking-tight font-bold">Board</span>
           </button>
 
-          {/* Rooms */}
           <button
             onClick={() => onSelectTab('suites')}
-            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 ${
+            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 cursor-pointer ${
               currentTab === 'suites'
-                ? "text-teal-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-teal-600 after:shadow-[0_0_6px_#0d9488]"
+                ? "text-cyan-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-cyan-600 after:shadow-[0_0_6px_#00e5ff]"
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
@@ -305,12 +304,11 @@ export const Navigation: React.FC<NavigationProps> = ({
             <span className="font-label-mono text-[9px] tracking-tight font-medium">Rooms</span>
           </button>
 
-          {/* Alerts */}
           <button
             onClick={() => onSelectTab('alerts')}
-            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 relative ${
+            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 relative cursor-pointer ${
               currentTab === 'alerts'
-                ? "text-teal-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-teal-600 after:shadow-[0_0_6px_#0d9488]"
+                ? "text-cyan-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-cyan-600 after:shadow-[0_0_6px_#00e5ff]"
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
@@ -321,12 +319,11 @@ export const Navigation: React.FC<NavigationProps> = ({
             )}
           </button>
 
-          {/* Trends */}
           <button
             onClick={() => onSelectTab('trends')}
-            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 ${
+            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 cursor-pointer ${
               currentTab === 'trends'
-                ? "text-teal-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-teal-600 after:shadow-[0_0_6px_#0d9488]"
+                ? "text-cyan-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-cyan-600 after:shadow-[0_0_6px_#00e5ff]"
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
@@ -334,12 +331,11 @@ export const Navigation: React.FC<NavigationProps> = ({
             <span className="font-label-mono text-[9px] tracking-tight font-medium">Trends</span>
           </button>
 
-          {/* Settings */}
           <button
             onClick={() => onSelectTab('settings')}
-            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 ${
+            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all active:scale-90 cursor-pointer ${
               currentTab === 'settings'
-                ? "text-teal-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-teal-600 after:shadow-[0_0_6px_#0d9488]"
+                ? "text-cyan-700 relative after:content-[''] after:absolute after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-cyan-600 after:shadow-[0_0_6px_#00e5ff]"
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >

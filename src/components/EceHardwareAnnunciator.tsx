@@ -122,7 +122,7 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
         <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
           <button
             onClick={() => setShowCircuitPinout(!showCircuitPinout)}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700 text-xs font-label-mono font-medium flex items-center gap-1.5 transition-all shadow-sm"
+            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700 text-xs font-label-mono font-medium flex items-center gap-1.5 transition-all shadow-sm cursor-pointer active:scale-95"
           >
             <span className="material-symbols-outlined text-sm text-sky-400">schema</span>
             <span>{showCircuitPinout ? 'Hide Pinout' : 'Pinout Schematics'}</span>
@@ -130,9 +130,9 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
 
           <button
             onClick={() => setAudioMuted(!audioMuted)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-label-mono font-medium flex items-center gap-1.5 transition-all border ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-label-mono font-medium flex items-center gap-1.5 transition-all border cursor-pointer active:scale-95 ${
               audioMuted
-                ? 'bg-slate-800 text-slate-400 border-slate-700'
+                ? 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
                 : 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.25)]'
             }`}
             title={audioMuted ? 'Unmute Browser Buzzer' : 'Mute Browser Buzzer'}
@@ -146,7 +146,7 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
           <button
             onClick={toggleTestAlarm}
             disabled={isTestAlarmActive}
-            className="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-label-mono font-bold flex items-center gap-1.5 transition-all active:scale-95"
+            className="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-label-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
           >
             <span className="material-symbols-outlined text-sm text-rose-400">notifications_active</span>
             <span>{isTestAlarmActive ? 'Beeping...' : 'Test Buzzer'}</span>

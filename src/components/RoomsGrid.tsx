@@ -77,10 +77,10 @@ export const RoomsGrid: React.FC<RoomsGridProps> = ({
             <div
               key={room.id}
               onClick={() => onSelectRoom(room.id)}
-              className={`cursor-pointer rounded-[22px] glass-panel shimmer-effect p-space-md border transition-all duration-300 flex flex-col justify-between hover:scale-[1.01] gpu-layer ${
+              className={`cursor-pointer rounded-[22px] glass-panel shimmer-effect p-space-md border transition-all duration-300 flex flex-col justify-between hover:scale-[1.01] active:scale-[0.98] gpu-layer ${
                 isSelected
-                  ? 'border-teal-500 shadow-[0_16px_36px_-6px_rgba(13,148,136,0.22)] ring-1 ring-teal-500/50'
-                  : ''
+                  ? 'border-cyan-500 shadow-[0_16px_36px_-6px_rgba(0,229,255,0.25)] ring-1 ring-cyan-500/50'
+                  : 'border-cyan-200/40'
               }`}
             >
               {/* Card Header */}

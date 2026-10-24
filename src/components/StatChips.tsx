@@ -21,10 +21,10 @@ export const StatChips: React.FC<StatChipsProps> = ({
 
   return (
     <div className="flex flex-col justify-between gap-space-md h-full">
-      {/* Card 1: Active Warning Alerts */}
+      {/* Active Warning Alerts */}
       <div
         onClick={onOpenAlerts}
-        className="cursor-pointer rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer border-cyan-200/40 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.06),0_0_15px_rgba(0,229,255,0.04)]"
+        className="cursor-pointer rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer border-cyan-200/40 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.06),0_0_15px_rgba(0,229,255,0.04)] active:scale-[0.98] transition-all"
       >
         <div className="flex items-start gap-space-md min-w-0">
           <div className={`w-12 h-12 rounded-2xl p-0.5 border flex items-center justify-center shrink-0 shadow-inner ${
@@ -51,16 +51,19 @@ export const StatChips: React.FC<StatChipsProps> = ({
               {activeAlertsCount > 0 ? latestAlertMessage : 'Kongu Cleanroom Nominal'}
             </span>
             <span className="font-label-sm text-xs text-slate-500">
-              {activeAlertsCount > 0 ? 'Click to inspect trigger benchmarks' : 'Zero unacknowledged bio-hazard events'}
+              {activeAlertsCount > 0 ? 'Inspect trigger benchmarks' : 'Zero unacknowledged bio-hazard events'}
             </span>
           </div>
         </div>
-        <button className="w-9 h-9 rounded-xl skeuo-button flex items-center justify-center shrink-0 ml-2 text-slate-600 group-hover:text-cyan-700">
+        <button
+          aria-label="Inspect alerts"
+          className="w-9 h-9 rounded-xl skeuo-button flex items-center justify-center shrink-0 ml-2 text-slate-600 group-hover:text-cyan-700 active:scale-95 transition-all"
+        >
           <span className="material-symbols-outlined text-lg">arrow_forward</span>
         </button>
       </div>
 
-      {/* Card 2: Rooms Coverage & Online Stat */}
+      {/* Rooms Coverage & Node Status */}
       <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer border-cyan-200/40 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.06),0_0_15px_rgba(0,229,255,0.04)]">
         <div className="flex items-start gap-space-md">
           <div className="w-12 h-12 rounded-2xl bg-cyan-50/90 p-0.5 border border-cyan-200/80 shadow-[0_0_12px_rgba(0,229,255,0.25)] flex items-center justify-center shrink-0">
@@ -104,7 +107,7 @@ export const StatChips: React.FC<StatChipsProps> = ({
         </div>
       </div>
 
-      {/* Card 3: Devices Offline & HVAC Scrubbers */}
+      {/* Hardware Link Specifications */}
       <div className="rounded-[22px] glass-panel shimmer-effect p-space-md flex items-center justify-between group relative overflow-hidden gpu-layer border-cyan-200/40 shadow-[0_10px_30px_-5px_rgba(2,132,199,0.06),0_0_15px_rgba(0,229,255,0.04)]">
         <div className="flex items-start gap-space-md">
           <div className={`w-12 h-12 rounded-2xl p-0.5 border flex items-center justify-center shrink-0 shadow-inner ${
