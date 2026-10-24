@@ -27,7 +27,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   return (
     <>
       {/* Desktop Navigation Dock */}
-      <aside className="hidden lg:flex fixed left-5 top-3.5 bottom-3.5 w-18 z-50 flex-col items-center py-5 glass-panel rounded-[22px] border border-cyan-200/50 shadow-[0_10px_35px_-5px_rgba(2,132,199,0.12),0_0_20px_rgba(0,229,255,0.06),inset_0_1px_0_0_rgba(255,255,255,1)]">
+      <aside className="hidden lg:flex fixed left-4 top-4 bottom-4 w-20 z-50 flex-col items-center py-6 glass-panel rounded-[24px] border border-cyan-200/50 shadow-[0_10px_35px_-5px_rgba(2,132,199,0.12),0_0_20px_rgba(0,229,255,0.06),inset_0_1px_0_0_rgba(255,255,255,1)]">
         <div className="flex flex-col items-center mb-6">
           <div className="p-1 transition-transform duration-300 hover:scale-110 flex items-center justify-center">
             <span className="material-symbols-outlined text-cyan-600 text-3xl font-light drop-shadow-[0_0_10px_rgba(0,229,255,0.5)]">
@@ -136,7 +136,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       </aside>
 
       {/* Desktop Header */}
-      <header className="hidden lg:flex fixed top-3.5 left-28 right-5 h-16 z-40 items-center justify-between px-space-lg glass-panel rounded-[20px] border border-cyan-200/50 shadow-[0_10px_35px_-5px_rgba(2,132,199,0.1),0_0_20px_rgba(0,229,255,0.08),inset_0_1px_0_0_rgba(255,255,255,1)]">
+      <header className="hidden lg:flex fixed top-4 left-28 right-4 h-16 z-40 items-center justify-between px-space-lg glass-panel rounded-[20px] border border-cyan-200/50 shadow-[0_10px_35px_-5px_rgba(2,132,199,0.1),0_0_20px_rgba(0,229,255,0.08),inset_0_1px_0_0_rgba(255,255,255,1)]">
         <div className="flex items-center gap-space-md">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
