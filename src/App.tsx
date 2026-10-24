@@ -80,6 +80,7 @@ export const App: React.FC = () => {
         onToggleDemoMode={toggleDemoMode}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        nodeOnline={onlineRooms > 0}
       />
 
       {/* Main Content Viewport */}

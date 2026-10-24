@@ -57,10 +57,11 @@ export const INITIAL_MOCK_ROOMS: Record<string, RoomData> = {
     history: generateHistory({ temperature: 21.2, humidity: 47, co2: 435, dust: 2.8 }),
     device: {
       wifiRssi: -58,
-      uptime: 142850,
+      uptime: 0,
       sensorStatus: 'nominal',
-      online: true,
-      lastSeen: Date.now()
+      // Boot as OFFLINE — becomes online only when real ESP32 pushes to Firebase
+      online: false,
+      lastSeen: 0
     }
   }
 };

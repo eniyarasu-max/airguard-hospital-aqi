@@ -13,8 +13,8 @@ export function useRooms() {
     if (saved !== null) {
       return saved === 'true';
     }
-    // Default to demo mode if Firebase has placeholder keys
-    return !isFirebaseConfigured();
+    // Default: Real hardware mode. Demo can be enabled via Settings.
+    return false;
   });
 
   const [rooms, setRooms] = useState<Record<string, RoomData>>(INITIAL_MOCK_ROOMS);
@@ -25,6 +25,11 @@ export function useRooms() {
     setDemoModeState((prev) => {
       const next = enabled !== undefined ? enabled : !prev;
       localStorage.setItem(DEMO_MODE_STORAGE_KEY, String(next));
+      // When switching back to real mode, reset to offline state
+      // so the UI waits for real ESP32 data rather than showing stale mock
+      if (!next) {
+        setRooms(INITIAL_MOCK_ROOMS);
+      }
       return next;
     });
   }, []);

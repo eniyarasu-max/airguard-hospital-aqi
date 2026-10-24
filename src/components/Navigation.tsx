@@ -10,6 +10,7 @@ interface NavigationProps {
   onToggleDemoMode: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
+  nodeOnline: boolean;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
@@ -19,7 +20,8 @@ export const Navigation: React.FC<NavigationProps> = ({
   demoMode,
   onToggleDemoMode,
   searchQuery,
-  onSearchChange
+  onSearchChange,
+  nodeOnline
 }) => {
   return (
     <>
@@ -168,16 +170,37 @@ export const Navigation: React.FC<NavigationProps> = ({
             />
           </div>
 
-          {/* Operational Status Pill */}
-          <div className="flex items-center gap-space-sm px-space-md py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/70 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-            </span>
-            <span className="font-label-mono text-[11px] text-emerald-800 tracking-wider uppercase font-bold">
-              Online · Kongu Node Active
-            </span>
-          </div>
+          {/* Operational Status Pill — reflects real ESP32 link state */}
+          {demoMode ? (
+            <div className="flex items-center gap-space-sm px-space-md py-1.5 rounded-full bg-amber-50/90 border border-amber-200/70 shadow-[0_0_12px_rgba(251,191,36,0.18)]">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+              </span>
+              <span className="font-label-mono text-[11px] text-amber-800 tracking-wider uppercase font-bold">
+                Demo Mode · Simulated
+              </span>
+            </div>
+          ) : nodeOnline ? (
+            <div className="flex items-center gap-space-sm px-space-md py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200/70 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+              </span>
+              <span className="font-label-mono text-[11px] text-emerald-800 tracking-wider uppercase font-bold">
+                Online · Kongu Node Active
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-space-sm px-space-md py-1.5 rounded-full bg-slate-100/90 border border-slate-300/70 shadow-[0_0_12px_rgba(148,163,184,0.12)]">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-400" />
+              </span>
+              <span className="font-label-mono text-[11px] text-slate-600 tracking-wider uppercase font-bold">
+                Waiting for Node
+              </span>
+            </div>
+          )}
 
           {/* Notifications Button */}
           <button
