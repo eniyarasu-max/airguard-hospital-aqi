@@ -58,12 +58,17 @@ export const App: React.FC = () => {
 
   return (
     <div className="bg-[#f8fafc] font-body-md text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-teal-100 selection:text-teal-900">
-      {/* Ambient Atmospheric Fluid Gradient Orbs (Cleanroom Glow) */}
+      {/* Ambient Atmospheric Fluid Gradient Orbs & Cleanroom Air Particles */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute -top-40 left-10 w-[640px] h-[640px] bg-teal-400/15 rounded-full blur-[140px]" />
         <div className="absolute top-1/3 -right-20 w-[580px] h-[580px] bg-sky-400/15 rounded-full blur-[160px]" />
         <div className="absolute -bottom-20 left-1/4 w-[600px] h-[600px] bg-purple-400/12 rounded-full blur-[150px]" />
         <div className="absolute top-2/3 left-10 w-[420px] h-[420px] bg-emerald-400/12 rounded-full blur-[130px]" />
+        {/* Living Cleanroom Atmosphere Micro-Motes */}
+        <div className="cleanroom-particle absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-teal-400/40 blur-[0.5px]" style={{ animationDelay: '0s' }} />
+        <div className="cleanroom-particle absolute top-1/2 right-1/4 w-2 h-2 rounded-full bg-sky-400/35 blur-[0.5px]" style={{ animationDelay: '2.5s' }} />
+        <div className="cleanroom-particle absolute bottom-1/3 left-1/3 w-1 h-1 rounded-full bg-emerald-400/50 blur-[0.5px]" style={{ animationDelay: '4.5s' }} />
+        <div className="cleanroom-particle absolute top-3/4 right-1/3 w-1.5 h-1.5 rounded-full bg-teal-300/40 blur-[0.5px]" style={{ animationDelay: '1.2s' }} />
       </div>
 
       {/* Navigation Shell (Desktop Dock & Header, Mobile Top & Glass Bottom Nav) */}
@@ -105,20 +110,20 @@ export const App: React.FC = () => {
                 {/* 1. Top Global Metrics & Physical Gauge Pod */}
                 <section className="grid grid-cols-1 xl:grid-cols-12 gap-gutter items-stretch mb-space-xl">
                   {/* Central Bio-Aura AQI Dial Card (7 Cols) */}
-                  <div className="xl:col-span-7 rounded-[24px] bg-white/75 backdrop-blur-[24px] p-space-lg border border-white/90 shadow-[0_10px_30px_-5px_rgba(15,23,42,0.06),0_4px_6px_-2px_rgba(15,23,42,0.03),inset_0_1px_0_0_rgba(255,255,255,1)] relative overflow-hidden flex flex-col justify-between">
+                  <div className="xl:col-span-7 rounded-[26px] glass-panel shimmer-effect p-space-lg relative overflow-hidden flex flex-col justify-between gpu-layer">
                     <div className="absolute -right-20 -top-20 w-80 h-80 bg-teal-400/10 rounded-full blur-[80px] pointer-events-none" />
 
                     {/* Pod Header */}
                     <div className="flex items-center justify-between relative z-10 flex-wrap gap-2">
                       <div className="flex items-center gap-space-sm">
-                        <span className="w-2.5 h-2.5 rounded-full bg-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.6)] animate-pulse" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-teal-500 shadow-[0_0_12px_rgba(20,184,166,0.8)] animate-pulse" />
                         <span className="font-label-mono text-label-mono uppercase tracking-widest text-slate-500 font-semibold text-xs">
                           Telemetry Station · Bio-Shield Alpha
                         </span>
                       </div>
-                      <div className="px-space-md py-1 rounded-full bg-emerald-50/90 border border-emerald-200/60 shadow-[inset_0_1px_2px_rgba(16,185,129,0.08)] flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
-                        <span className="font-label-mono text-[10px] text-emerald-800 tracking-wider uppercase font-semibold">
+                      <div className="px-space-md py-1 rounded-full bg-emerald-50/90 border border-emerald-200/80 shadow-[inset_0_1px_2px_rgba(16,185,129,0.12)] flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                        <span className="font-label-mono text-[10px] text-emerald-800 tracking-wider uppercase font-bold">
                           Class I Bio-Safety Standard
                         </span>
                       </div>
@@ -137,46 +142,51 @@ export const App: React.FC = () => {
                           <span className="font-label-mono text-label-mono text-teal-700 uppercase tracking-wider font-semibold text-xs">
                             Composite Atmosphere
                           </span>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-label-mono font-bold bg-teal-50 text-teal-700 border border-teal-200">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-label-mono font-bold bg-teal-50 text-teal-700 border border-teal-200 shadow-sm">
                             LIVE SCAN
                           </span>
                         </div>
-                        <div className="flex items-baseline gap-space-sm">
-                          <span className="font-label-numeric-lg text-5xl md:text-[64px] leading-none text-slate-900 font-extralight tracking-tight">
-                            {compositeAQI}
-                          </span>
-                          <span className="font-headline-md text-2xl text-slate-400 font-light">
-                            AQI
-                          </span>
+
+                        {/* Skeuomorphic Recessed Readout Plate */}
+                        <div className="my-2 p-4 rounded-2xl glass-inset flex flex-col justify-center relative overflow-hidden">
+                          <div className="flex items-baseline gap-space-sm">
+                            <span className="font-label-numeric-lg text-5xl md:text-[68px] leading-none text-slate-900 font-light tracking-tight tabular-nums">
+                              {compositeAQI}
+                            </span>
+                            <span className="font-headline-md text-2xl text-slate-400 font-light">
+                              AQI
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2">
+                            <div
+                              className="h-2.5 w-2.5 rounded-full shadow-sm"
+                              style={{ backgroundColor: aqiColor, boxShadow: `0 0 8px ${aqiColor}` }}
+                            />
+                            <span
+                              className="font-label-sm text-xs font-bold uppercase tracking-wider"
+                              style={{ color: aqiColor }}
+                            >
+                              {aqiLabel}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          <div
-                            className="h-2 w-2 rounded-full shadow-sm"
-                            style={{ backgroundColor: aqiColor }}
-                          />
-                          <span
-                            className="font-label-sm text-xs font-semibold uppercase tracking-wider"
-                            style={{ color: aqiColor }}
-                          >
-                            {aqiLabel}
-                          </span>
-                        </div>
-                        <p className="font-body-md text-sm text-slate-600 mt-3 max-w-sm">
+
+                        <p className="font-body-md text-sm text-slate-600 mt-2 max-w-sm">
                           Operating conditions nominal across hospital suites. Laminar air displacement stabilized with zero cytotoxic particle incursions detected.
                         </p>
                       </div>
                     </div>
 
                     {/* Pod Footer Micro-Status Bar */}
-                    <div className="pt-space-md mt-space-sm border-t border-slate-200/70 flex flex-wrap items-center justify-between gap-space-md text-slate-500 text-xs">
+                    <div className="pt-space-md mt-space-sm border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-space-md text-slate-500 text-xs">
                       <div className="flex items-center gap-space-md">
                         <div className="flex items-center gap-1.5">
                           <span className="material-symbols-outlined text-base text-teal-600">air</span>
-                          <span className="font-label-mono text-slate-700 font-medium">Velocity: 0.42 m/s</span>
+                          <span className="font-label-mono text-slate-700 font-medium tabular-nums">Velocity: 0.42 m/s</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <span className="material-symbols-outlined text-base text-sky-600">compress</span>
-                          <span className="font-label-mono text-slate-700 font-medium">Pressure: +24.8 Pa</span>
+                          <span className="font-label-mono text-slate-700 font-medium tabular-nums">Pressure: +24.8 Pa</span>
                         </div>
                       </div>
                       <span className="font-label-mono text-slate-400">

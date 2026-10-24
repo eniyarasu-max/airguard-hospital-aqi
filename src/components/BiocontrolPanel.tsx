@@ -12,7 +12,7 @@ export const BiocontrolPanel: React.FC<BiocontrolPanelProps> = ({
   achTarget = 16
 }) => {
   return (
-    <div className="rounded-[24px] bg-white/75 backdrop-blur-[24px] p-space-lg border border-white/90 shadow-[0_10px_30px_-5px_rgba(15,23,42,0.06),0_4px_6px_-2px_rgba(15,23,42,0.03),inset_0_1px_0_0_rgba(255,255,255,1)] flex flex-col justify-between h-full">
+    <div className="rounded-[24px] glass-panel shimmer-effect p-space-lg flex flex-col justify-between h-full gpu-layer">
       <div>
         {/* Top Header */}
         <div className="flex items-center justify-between pb-space-md mb-space-md border-b border-slate-200/70">

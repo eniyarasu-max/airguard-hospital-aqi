@@ -6,5 +6,20 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true
+  },
+  build: {
+    target: 'esnext',
+    cssCodeSplit: true,
+    minify: 'esbuild',
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          charts: ['recharts'],
+          firebase: ['firebase/app', 'firebase/database']
+        }
+      }
+    }
   }
 });

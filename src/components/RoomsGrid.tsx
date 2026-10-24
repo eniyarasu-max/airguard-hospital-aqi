@@ -77,10 +77,10 @@ export const RoomsGrid: React.FC<RoomsGridProps> = ({
             <div
               key={room.id}
               onClick={() => onSelectRoom(room.id)}
-              className={`cursor-pointer rounded-[22px] bg-white/80 backdrop-blur-[24px] p-space-md border transition-all duration-200 flex flex-col justify-between hover:bg-white hover:scale-[1.01] ${
+              className={`cursor-pointer rounded-[22px] glass-panel shimmer-effect p-space-md border transition-all duration-300 flex flex-col justify-between hover:scale-[1.01] gpu-layer ${
                 isSelected
-                  ? 'border-teal-500 shadow-[0_12px_32px_-4px_rgba(13,148,136,0.18)]'
-                  : 'border-white/90 shadow-[0_10px_30px_-5px_rgba(15,23,42,0.06),0_4px_6px_-2px_rgba(15,23,42,0.03),inset_0_1px_0_0_rgba(255,255,255,1)]'
+                  ? 'border-teal-500 shadow-[0_16px_36px_-6px_rgba(13,148,136,0.22)] ring-1 ring-teal-500/50'
+                  : ''
               }`}
             >
               {/* Card Header */}
@@ -90,41 +90,41 @@ export const RoomsGrid: React.FC<RoomsGridProps> = ({
                   <span
                     className={`w-2.5 h-2.5 rounded-full ${
                       aqiResult.status === 'Good'
-                        ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]'
+                        ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]'
                         : aqiResult.status === 'Moderate'
-                        ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)] animate-pulse'
-                        : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)] animate-ping'
+                        ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-pulse'
+                        : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)] animate-ping'
                     }`}
                   />
                   <span className="font-body-md text-base font-semibold text-slate-900 truncate">
                     {room.name}
                   </span>
                 </div>
-                <span className={`font-label-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${badgeClasses}`}>
+                <span className={`font-label-mono text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border shadow-sm ${badgeClasses}`}>
                   {badge.text}
                 </span>
               </div>
 
               {/* Inset Metric Triplet Well */}
-              <div className="grid grid-cols-3 gap-space-sm my-space-md py-space-sm bg-slate-50/80 border border-slate-100 rounded-xl px-space-sm shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] text-center">
+              <div className="grid grid-cols-3 gap-space-sm my-space-md py-space-sm glass-inset rounded-xl px-space-sm text-center">
                 <div className="flex flex-col">
-                  <span className="font-label-mono text-[10px] text-slate-400">AQI</span>
+                  <span className="font-label-mono text-[10px] text-slate-400 font-bold">AQI</span>
                   <span
-                    className="font-headline-md text-xl md:text-2xl font-light"
+                    className="font-headline-md text-xl md:text-2xl font-light tabular-nums"
                     style={{ color: aqiResult.color }}
                   >
                     {aqiResult.score}
                   </span>
                 </div>
-                <div className="flex flex-col border-x border-slate-200/60">
-                  <span className="font-label-mono text-[10px] text-slate-400">TEMP</span>
-                  <span className="font-headline-md text-xl md:text-2xl font-light text-slate-900">
+                <div className="flex flex-col border-x border-slate-200/80">
+                  <span className="font-label-mono text-[10px] text-slate-400 font-bold">TEMP</span>
+                  <span className="font-headline-md text-xl md:text-2xl font-light text-slate-900 tabular-nums">
                     {room.latest.temperature.toFixed(1)}°
                   </span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-label-mono text-[10px] text-slate-400">HUMID</span>
-                  <span className="font-headline-md text-xl md:text-2xl font-light text-slate-900">
+                  <span className="font-label-mono text-[10px] text-slate-400 font-bold">HUMID</span>
+                  <span className="font-headline-md text-xl md:text-2xl font-light text-slate-900 tabular-nums">
                     {room.latest.humidity}%
                   </span>
                 </div>
