@@ -1,0 +1,13 @@
+CompileFlags:
+  Add:
+    - "-xc++"
+    - "-std=gnu++17"
+    - "-w"
+    - "-DARDUINO=10819"
+    - "-DESP32"
+    - "-ferror-limit=0"
+
+Diagnostics:
+  Suppress: ["*"]
+  UnusedIncludes: None
+

@@ -1,3 +1,13 @@
 {
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "files.associations": {
+    "*.ino": "cpp"
+  },
+  "clangd.fallbackFlags": [
+    "-xc++",
+    "-std=gnu++17",
+    "-DARDUINO=10819",
+    "-DESP32",
+    "-ferror-limit=0"
+  ]
 }

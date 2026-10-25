@@ -10,12 +10,15 @@
  *     - CPU Dynamic Frequency Scaling: Scaled to 80 MHz (saving ~55% CPU active power).
  *     - Wi-Fi Modem-Sleep (WIFI_PS_MIN_MODEM): Powers down RF synthesizer between
  *       DTIM beacons, reducing idle Wi-Fi power from ~130 mA to ~18 mA.
+ *       (Activated AFTER connection to prevent association handshake drops).
  *     - Network Batching & Single-Transaction Sync: Consolidates Firebase roundtrips
  *       to minimize RF transmit airtime (TX draws ~180 mA).
  *     - Dual-Rate Logging: High-frequency `/latest` update (5s) for live HUD,
  *       decimated `/history` archive (60s) to conserve flash wear, bandwidth, & power.
  *
  *  2. METROLOGY & SIGNAL ACCURACY:
+ *     - Real-Time UTC NTP Epoch Clock: Synchronizes standard Unix epoch milliseconds
+ *       with pool.ntp.org so web dashboard instantly detects node online status.
  *     - 12-bit ADC Noise Rejection: 32x hardware oversampling with trimmed-mean
  *       outlier rejection (discards top/bottom 25% ADC noise transients).
  *     - DHT22-Coupled Dynamic Compensation for MQ135:
@@ -31,14 +34,18 @@
  *     - Non-blocking cooperative multitasking: FreeRTOS idle task allowed to sleep.
  *     - Wi-Fi Self-Healing State Machine: Auto-reconnect with non-blocking backoff.
  *     - Sensor Fault Detection: Reports nominal / degraded / fault telemetry states.
+ *     - Resilient Firebase Authentication: Gracefully falls back to direct RTDB
+ *       if Anonymous Sign-in is not pre-configured in Firebase Console.
  * ============================================================================
  */
 
 #include <WiFi.h>
 #include <esp_wifi.h>
+#include <time.h>
+#include <sys/time.h>
 #include <Firebase_ESP_Client.h>
-#include "addons/TokenHelper.h"
-#include "addons/RTDBHelper.h"
+#include <addons/TokenHelper.h>
+#include <addons/RTDBHelper.h>
 #include <DHT.h>
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -127,18 +134,36 @@ uint32_t g_lastHistoryMs   = 0;
 uint32_t g_bootTimestamp   = 0;
 float    g_dustEmaFiltered = -1.0f; // Exponential moving average buffer
 
+// Forward declarations
+int readOversampledAdc(uint8_t pin, int samples = ADC_OVERSAMPLES);
+
 // ════════════════════════════════════════════════════════════════════════════
 // 5. HARDWARE-LEVEL SIGNAL PROCESSING & SAMPLING
 // ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Return current Unix Epoch time in milliseconds.
+ * Grounded in pool.ntp.org standard clock.
+ */
+double getEpochTimeMs() {
+  time_t now = time(nullptr);
+  if (now > 1700000000) {
+    struct timeval tv;
+    gettimeofday(&tv, nullptr);
+    return ((double)tv.tv_sec * 1000.0) + ((double)tv.tv_usec / 1000.0);
+  }
+  // Fallback before NTP sync: estimated epoch based on compile timestamp + uptime
+  return 1774390000000.0 + (double)millis();
+}
 
 /**
  * High-precision oversampling with trimmed-mean noise rejection.
  * Takes N samples, performs an in-place sort, and averages the interquartile range
  * to reject high-frequency switching noise from the ESP32 Wi-Fi radio.
  */
-int readOversampledAdc(uint8_t pin, int samples = ADC_OVERSAMPLES) {
+int readOversampledAdc(uint8_t pin, int samples) {
   int rawBuffer[ADC_OVERSAMPLES];
-  int count = min(samples, ADC_OVERSAMPLES);
+  int count = (samples < ADC_OVERSAMPLES) ? samples : ADC_OVERSAMPLES;
 
   for (int i = 0; i < count; i++) {
     rawBuffer[i] = analogRead(pin);
@@ -159,6 +184,8 @@ int readOversampledAdc(uint8_t pin, int samples = ADC_OVERSAMPLES) {
   // Trim top 25% and bottom 25% (Interquartile Mean)
   int startIdx = count / 4;
   int endIdx   = count - startIdx;
+  if (endIdx <= startIdx) return rawBuffer[0];
+  
   long sum = 0;
   for (int i = startIdx; i < endIdx; i++) {
     sum += rawBuffer[i];
@@ -323,10 +350,14 @@ AnnunciatorState updateHardwareAnnunciators(float co2Ppm, float dustDensity, int
       digitalWrite(PIN_LED_GREEN, LOW);
       digitalWrite(PIN_LED_YELLOW, LOW);
       digitalWrite(PIN_LED_RED, HIGH);
-      // Audible pulse alert for critical atmospheric breach
-      digitalWrite(PIN_BUZZER, HIGH);
-      delay(60);
-      digitalWrite(PIN_BUZZER, LOW);
+      // Audible pulse alert for critical atmospheric breach (2.4 kHz piezo tone or pulse)
+      // Supports both active buzzers (DC high) and passive buzzers (tone / square pulse)
+      for (int i = 0; i < 150; i++) {
+        digitalWrite(PIN_BUZZER, HIGH);
+        delayMicroseconds(208); // 2400 Hz half-period (~416µs total period)
+        digitalWrite(PIN_BUZZER, LOW);
+        delayMicroseconds(208);
+      }
       break;
   }
 
@@ -338,10 +369,19 @@ AnnunciatorState updateHardwareAnnunciators(float co2Ppm, float dustDensity, int
 // ════════════════════════════════════════════════════════════════════════════
 
 void pushClinicalTelemetry(const SensorMetrics& m, AnnunciatorState state, bool writeHistory) {
-  if (!g_firebaseReady || !Firebase.ready()) return;
+  if (!Firebase.ready()) return;
 
-  uint32_t nowEpoch = millis();
-  uint32_t uptimeSec = (nowEpoch - g_bootTimestamp) / 1000;
+  // Initialize static Room Metadata once Firebase is connected & authenticated
+  static bool s_metaInitialized = false;
+  if (!s_metaInitialized) {
+    Firebase.RTDB.setString(&fbdo, ("/rooms/" + String(ROOM_ID) + "/name").c_str(), ROOM_DISPLAY_NAME);
+    Firebase.RTDB.setString(&fbdo, ("/rooms/" + String(ROOM_ID) + "/zone").c_str(), ROOM_ZONE);
+    s_metaInitialized = true;
+    Serial.println("  [Cloud RTDB]  ✅ Room metadata synchronized (/name & /zone)");
+  }
+
+  double nowEpochMs = getEpochTimeMs();
+  uint32_t uptimeSec = (millis() - g_bootTimestamp) / 1000;
   int32_t  rssi = WiFi.RSSI();
 
   // Create unified payload to minimize radio airtime
@@ -352,7 +392,7 @@ void pushClinicalTelemetry(const SensorMetrics& m, AnnunciatorState state, bool 
   payload.set("tvoc",        m.tvocPpb);
   payload.set("dust",        m.dustDensity);
   payload.set("gas",         m.rawGasAdc);
-  payload.set("timestamp",   (int)nowEpoch);
+  payload.set("timestamp",   nowEpochMs);
 
   // Indicators block (3 LEDs + Buzzer state)
   FirebaseJson indDoc;
@@ -392,12 +432,12 @@ void pushClinicalTelemetry(const SensorMetrics& m, AnnunciatorState state, bool 
   deviceDoc.set("uptime",       (int)uptimeSec);
   deviceDoc.set("sensorStatus", (m.dhtValid && m.gasValid && m.dustValid) ? "nominal" : "degraded");
   deviceDoc.set("online",       true);
-  deviceDoc.set("lastSeen",     (int)nowEpoch);
+  deviceDoc.set("lastSeen",     nowEpochMs);
   Firebase.RTDB.setJSON(&fbdo, devicePath.c_str(), &deviceDoc);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// 8. DIAGNOSTIC FORMATTERS
+// 9. DIAGNOSTIC FORMATTERS
 // ════════════════════════════════════════════════════════════════════════════
 
 const char* evaluateAqiBand(float co2, float dust) {
@@ -430,7 +470,7 @@ void printSerialDashboard(const SensorMetrics& m) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// 9. SETUP & INITIALIZATION
+// 10. SETUP & INITIALIZATION
 // ════════════════════════════════════════════════════════════════════════════
 void setup() {
   Serial.begin(115200);
@@ -481,15 +521,13 @@ void setup() {
   }
   Serial.println("Ready!");
 
-  // 4. Wi-Fi Configuration with Clean State Machine & Modem Sleep
+  // 4. Wi-Fi Configuration with Clean State Machine
   Serial.printf("[WiFi] Initializing radio for SSID: '%s'...\n", WIFI_SSID);
   WiFi.disconnect(true);
   delay(200);
   WiFi.mode(WIFI_STA);
 
-  // Enable Wi-Fi Modem Sleep (Powers down RF between beacon intervals)
-  esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
-
+  // Connect to AP
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   int retries = 0;
@@ -501,8 +539,27 @@ void setup() {
 
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("\n[WiFi] ✅ Connected!");
-    Serial.printf("       IP: %s | RSSI: %d dBm | Modem Sleep: ON\n",
+    Serial.printf("       IP: %s | RSSI: %d dBm\n",
                   WiFi.localIP().toString().c_str(), WiFi.RSSI());
+
+    // Enable Wi-Fi Modem Sleep ONLY AFTER successful connection
+    esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
+    Serial.println("       Modem Sleep: ACTIVE (Powers down RF between DTIM beacons)");
+
+    // Synchronize NTP standard time for live dashboard online verification & history
+    configTime(0, 0, "pool.ntp.org", "time.google.com");
+    Serial.print("[NTP]  Synchronizing standard UTC epoch clock");
+    int ntpRetries = 0;
+    while (time(nullptr) < 1700000000 && ntpRetries < 15) {
+      delay(200);
+      Serial.print(".");
+      ntpRetries++;
+    }
+    if (time(nullptr) >= 1700000000) {
+      Serial.println(" ✅ Synced!");
+    } else {
+      Serial.println(" ⏳ Syncing in background.");
+    }
   } else {
     Serial.println("\n[WiFi] ⚠️ Initial connection timed out. Background retry active.");
   }
@@ -510,22 +567,20 @@ void setup() {
   // 5. Firebase Initialization
   fbConfig.api_key      = FIREBASE_API_KEY;
   fbConfig.database_url = FIREBASE_DATABASE_URL;
+  fbConfig.token_status_callback = tokenStatusCallback;
 
-  Serial.println("[Firebase] Authenticating...");
+  Serial.println("[Firebase] Initializing client session...");
   if (Firebase.signUp(&fbConfig, &auth, "", "")) {
-    Serial.println("[Firebase] ✅ Anonymous Auth OK");
+    Serial.println("[Firebase] ✅ Anonymous Auth Registered");
     g_firebaseReady = true;
   } else {
-    Serial.printf("[Firebase] ❌ Auth Note: %s\n", fbConfig.signer.signupError.message.c_str());
+    Serial.printf("[Firebase] ℹ️ Auth Note: %s (Direct database access)\n", 
+                  fbConfig.signer.signupError.message.c_str());
+    g_firebaseReady = true; // Still allow RTDB operations if open rules or API key are active
   }
 
-  fbConfig.token_status_callback = tokenStatusCallback;
   Firebase.begin(&fbConfig, &auth);
   Firebase.reconnectWiFi(true);
-
-  // Set Static Room Metadata once on boot (saves energy vs writing every 5s)
-  Firebase.RTDB.setString(&fbdo, ("/rooms/" + String(ROOM_ID) + "/name").c_str(), ROOM_DISPLAY_NAME);
-  Firebase.RTDB.setString(&fbdo, ("/rooms/" + String(ROOM_ID) + "/zone").c_str(), ROOM_ZONE);
 
   g_bootTimestamp   = millis();
   g_lastTelemetryMs = millis();
@@ -535,7 +590,7 @@ void setup() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// 10. MAIN SYSTEM LOOP (NON-BLOCKING WITH COOPERATIVE SLEEP)
+// 11. MAIN SYSTEM LOOP (NON-BLOCKING WITH COOPERATIVE SLEEP)
 // ════════════════════════════════════════════════════════════════════════════
 void loop() {
   uint32_t currentMs = millis();
