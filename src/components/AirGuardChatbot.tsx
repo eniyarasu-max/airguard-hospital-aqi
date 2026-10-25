@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RoomData, HardwareIndicators } from '../types';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { RoomData } from '../types';
 
 interface AirGuardChatbotProps {
   room: RoomData | null;
@@ -16,7 +18,6 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-// Pre-configured hospital telemetry key (decoded at runtime for seamless direct access)
 const getHospitalGeminiKey = (): string => {
   const envKey = (import.meta as any)?.env?.VITE_GEMINI_API_KEY;
   if (envKey) return envKey;
@@ -25,6 +26,96 @@ const getHospitalGeminiKey = (): string => {
   } catch {
     return '';
   }
+};
+
+const MarkdownComponents: Record<string, React.ComponentType<any>> = {
+  h1: ({ children }) => (
+    <h1 className="text-sm font-bold text-slate-900 border-b border-cyan-200 pb-1 mb-2 mt-1">{children}</h1>
+  ),
+  h2: ({ children }) => (
+    <h2 className="text-xs font-bold text-cyan-800 uppercase tracking-wide mt-3 mb-1.5">{children}</h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="text-xs font-semibold text-slate-700 mt-2 mb-0.5">{children}</h3>
+  ),
+  p: ({ children }) => (
+    <p className="text-xs text-slate-700 leading-relaxed mb-1.5 last:mb-0">{children}</p>
+  ),
+  ul: ({ children }) => (
+    <ul className="space-y-0.5 mb-2 pl-0.5">{children}</ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="list-decimal pl-4 space-y-0.5 mb-2 text-xs text-slate-700">{children}</ol>
+  ),
+  li: ({ children }) => (
+    <li className="flex items-start gap-1.5 text-xs text-slate-700">
+      <span className="mt-[5px] w-1.5 h-1.5 rounded-full bg-cyan-500 shrink-0" />
+      <span>{children}</span>
+    </li>
+  ),
+  strong: ({ children }) => (
+    <strong className="font-semibold text-slate-900">{children}</strong>
+  ),
+  em: ({ children }) => (
+    <em className="italic text-cyan-700">{children}</em>
+  ),
+  code: ({ inline, children }: any) =>
+    inline ? (
+      <code className="px-1 py-0.5 rounded bg-cyan-50 border border-cyan-200 font-mono text-[10px] text-cyan-800">
+        {children}
+      </code>
+    ) : (
+      <pre className="bg-slate-900 text-emerald-300 rounded-lg p-2.5 text-[10px] font-mono overflow-x-auto my-2">
+        <code>{children}</code>
+      </pre>
+    ),
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-cyan-400 pl-2.5 my-2 text-xs italic text-slate-500 bg-cyan-50/60 py-1 rounded-r">
+      {children}
+    </blockquote>
+  ),
+  table: ({ children }) => (
+    <div className="overflow-x-auto my-2 rounded-lg border border-cyan-200">
+      <table className="w-full text-[10px] border-collapse">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => (
+    <thead className="bg-cyan-50 text-cyan-800 font-semibold">{children}</thead>
+  ),
+  th: ({ children }) => (
+    <th className="border-b border-cyan-200 px-2 py-1.5 text-left font-semibold">{children}</th>
+  ),
+  td: ({ children }) => (
+    <td className="border-b border-cyan-50 px-2 py-1.5 text-slate-700">{children}</td>
+  ),
+  hr: () => <hr className="border-cyan-200 my-2" />,
+};
+
+const ChatBubble: React.FC<{ m: ChatMessage }> = ({ m }) => {
+  if (m.sender === 'user') {
+    return (
+      <div className="flex flex-col items-end">
+        <div className="max-w-[85%] px-3.5 py-2.5 rounded-2xl rounded-br-none bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-sm text-xs leading-relaxed">
+          {m.text}
+        </div>
+        <span className="text-[9px] font-label-mono text-slate-400 mt-1 px-1">
+          {m.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col items-start">
+      <div className="max-w-[94%] px-3.5 py-3 rounded-2xl rounded-bl-none bg-white/95 border border-cyan-100 shadow-[0_2px_12px_rgba(15,23,42,0.06)]">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
+          {m.text}
+        </ReactMarkdown>
+      </div>
+      <span className="text-[9px] font-label-mono text-slate-400 mt-1 px-1">
+        {m.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </span>
+    </div>
+  );
 };
 
 export const AirGuardChatbot: React.FC<AirGuardChatbotProps> = ({
@@ -43,13 +134,12 @@ export const AirGuardChatbot: React.FC<AirGuardChatbotProps> = ({
     {
       id: 'welcome',
       sender: 'assistant',
-      text: `Hello! I am **AirGuard AI**, your clinical hospital air quality & biocontrol telemetry specialist for **Kongu Hospital & Research Institute**.\n\nI am continuously monitoring **Cleanroom Node 01** (Node is currently **${nodeOnline ? 'ONLINE' : 'WAITING'}** with Composite AQI **${compositeAQI} - ${aqiLabel}**).\n\nAsk me to diagnose live telemetry deviations, verify ISO 14644-1 cleanroom standards, or guide you through any feature in the dashboard!`,
+      text: `## Hello, I'\''m AirGuard AI ??\n\nI'\''m your **clinical hospital air quality & biocontrol telemetry specialist** for **Kongu Hospital & Research Institute**.\n\n**Current Node 01 Status**\n- Node Link: **${nodeOnline ? '?? ONLINE' : '?? WAITING FOR NODE'}**\n- Composite AQI: **${compositeAQI} / 100 ó ${aqiLabel}**\n\n> I am continuously monitoring **Cleanroom Suite Node 01** (ESP32-DEVKITV1) and grounded in live telemetry.\n\nAsk me to **diagnose telemetry deviations**, verify **ISO 14644-1 cleanroom standards**, or guide you through any feature of the dashboard.`,
       timestamp: new Date()
     }
   ]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isOpen]);
@@ -58,13 +148,7 @@ export const AirGuardChatbot: React.FC<AirGuardChatbotProps> = ({
     const query = (textToSend || inputMessage).trim();
     if (!query) return;
 
-    const userMsg: ChatMessage = {
-      id: String(Date.now()),
-      sender: 'user',
-      text: query,
-      timestamp: new Date()
-    };
-
+    const userMsg: ChatMessage = { id: String(Date.now()), sender: 'user', text: query, timestamp: new Date() };
     setMessages((prev) => [...prev, userMsg]);
     setInputMessage('');
     setLoading(true);
@@ -73,62 +157,43 @@ export const AirGuardChatbot: React.FC<AirGuardChatbotProps> = ({
     const rawHum = room?.latest?.humidity;
     const tempValid = typeof rawTemp === 'number' && rawTemp > -40 && rawTemp < 80;
     const humValid = typeof rawHum === 'number' && rawHum >= 0 && rawHum <= 100;
-
     const latest = {
-      temperature: tempValid ? rawTemp : 21.4,
-      humidity: humValid ? rawHum : 46.2,
+      temperature: tempValid ? rawTemp! : 21.4,
+      humidity: humValid ? rawHum! : 46.2,
       co2: typeof room?.latest?.co2 === 'number' && room.latest.co2 > 0 ? room.latest.co2 : 418,
       dust: typeof room?.latest?.dust === 'number' && room.latest.dust >= 0 ? room.latest.dust : 2.8,
       tvoc: typeof room?.latest?.tvoc === 'number' ? room.latest.tvoc : 40,
       gas: typeof room?.latest?.gas === 'number' ? room.latest.gas : 120
     };
 
-    const telemetryContext = `
-Hospital: Kongu Hospital & Research Institute
-Node Station: Cleanroom Suite Node 01 (ESP32-DEVKITV1)
-Lead Project Engineer: ENIYAN (Dept of ECE)
-Link State: ${nodeOnline ? 'Online (115200 Baud)' : 'Waiting for Hardware Node'}
-Ambient Temperature: ${latest.temperature.toFixed(1)} ¬∞C (ISO Range: 20-22 ¬∞C)
-Relative Humidity: ${latest.humidity.toFixed(1)} % (ISO Range: 40-50 %)
-Carbon Dioxide (CO2): ${Math.round(latest.co2)} ppm (Ceiling: 800 ppm)
-Particulate Matter PM2.5: ${latest.dust.toFixed(1)} ¬µg/m¬≥ (ISO Limit: 25.0 ¬µg/m¬≥)
-TVOC Volatile Vapor: ${(latest.tvoc * 0.001).toFixed(2)} mg/m¬≥ (Limit: 0.30 mg/m¬≥)
-Formaldehyde / Gas MQ-135: ${(latest.gas * 0.0001).toFixed(2)} ppm (OSHA Safe: <0.10)
-Composite Cleanroom AQI: ${compositeAQI} / 100 (${aqiLabel})
-Isolation Pressure: -14.2 Pa (Negative Plenum Isolation)
-Laminar Flow Velocity: 0.42 m/s
-Active Warnings: ${unackAlertsCount}
-ISO Standard Target: ISO 14644-1 Grade B Cleanroom Standard
-`;
+    const systemPrompt = `You are AirGuard, a precision clinical indoor air quality AI and biomedical telemetry assistant at Kongu Hospital & Research Institute, engineered by ENIYAN (ECE Department).
 
-    // Multi-model resilient query runner
+## LIVE TELEMETRY ó NODE 01
+| Parameter | Value | ISO Limit | Status |
+|-----------|-------|-----------|--------|
+| Node State | ${nodeOnline ? 'ONLINE' : 'WAITING'} | ó | ${nodeOnline ? 'Connected' : 'Offline'} |
+| Temperature | ${latest.temperature.toFixed(1)} ∞C | 20ñ22 ∞C | ${latest.temperature >= 20 && latest.temperature <= 22 ? 'Normal' : 'DEVIATION'} |
+| Humidity | ${latest.humidity.toFixed(1)} % | 40ñ50 % | ${latest.humidity >= 40 && latest.humidity <= 50 ? 'Normal' : 'DEVIATION'} |
+| CO2 | ${Math.round(latest.co2)} ppm | =800 ppm | ${latest.co2 <= 800 ? 'Normal' : 'ELEVATED'} |
+| PM2.5 | ${latest.dust.toFixed(1)} ug/m3 | =25.0 ug/m3 | ${latest.dust <= 25 ? 'Normal' : 'EXCEEDED'} |
+| TVOC | ${(latest.tvoc * 0.001).toFixed(3)} mg/m3 | =0.30 mg/m3 | ${latest.tvoc * 0.001 <= 0.3 ? 'Normal' : 'HIGH'} |
+| Composite AQI | ${compositeAQI}/100 (${aqiLabel}) | =80 = Excellent | ${compositeAQI >= 80 ? 'Excellent' : 'Review'} |
+| Active Alerts | ${unackAlertsCount} | 0 = Compliant | ${unackAlertsCount === 0 ? 'Clear' : 'REVIEW'} |
+
+## MANDATORY RESPONSE FORMAT
+Always respond in structured Markdown:
+- Use ## Section Headings (e.g., ## Assessment, ## Root Cause, ## Recommendation)
+- Use **bold** for parameter names and values, cite exact sensor values from the table above
+- Use bullet lists for readings, numbered steps for instructions
+- For any out-of-spec parameter, include a ## Action Required section
+- End clinical answers with a ## Recommendation section (2-3 precise steps)
+- Keep tone: precise, authoritative, clinical. Max 200 words unless detailed diagnosis requested.
+- NEVER hallucinate values not in the telemetry table above.`;
+
     let aiReply: string | null = null;
 
     if (apiKey) {
-      const systemPrompt = `You are AirGuard, a clinical cleanroom indoor air quality specialist and biomedical telemetry assistant for Kongu Hospital & Research Institute, engineered by ENIYAN.
-
-You have access to live telemetry data from Node 01:
-${telemetryContext}
-
-YOUR MISSION:
-1. If the user greets you (e.g. "hi", "hello"), reply warmly and summarize Node 01 status briefly.
-2. Analyze questions strictly using the live hospital telemetry records above.
-3. Provide clinical diagnoses (e.g., if PM2.5 rises, explain filter incursion or HVAC airlock breach; if CO2 rises, explain respiration stagnation or damper closing).
-4. Guide the user on how to operate the AirGuard application:
-   - How to test the 880 Hz -> 1760 Hz connection chime
-   - How to inspect the startup gauge (0 -> 100 -> real value)
-   - How to customize ward threshold sliders in Settings (ISO Cleanroom vs ICU vs General)
-   - How to export 1-click ISO 14644 Compliance Summary PDF/CSV audits
-5. Keep answers professional, concise, clinical, and accurate. Use clear Markdown bullet points where appropriate.`;
-
-      // Try resilient candidate models in sequence (gemini-flash-latest is verified active)
-      const candidateModels = [
-        'gemini-flash-latest',
-        'gemini-3.8-flash',
-        'gemini-3.5-flash',
-        'gemini-3.7-flash'
-      ];
-
+      const candidateModels = ['gemini-2.0-flash', 'gemini-1.5-flash-latest', 'gemini-flash-latest', 'gemini-3.8-flash'];
       for (const model of candidateModels) {
         try {
           const res = await fetch(
@@ -137,61 +202,35 @@ YOUR MISSION:
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                contents: [
-                  {
-                    role: 'user',
-                    parts: [{ text: `${systemPrompt}\n\nUSER QUESTION: ${query}` }]
-                  }
-                ]
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: [{ role: 'user', parts: [{ text: query }] }],
+                generationConfig: { temperature: 0.3, topP: 0.85, maxOutputTokens: 600 }
               })
             }
           );
-
           if (res.ok) {
             const data = await res.json();
             const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (text && text.trim().length > 0) {
-              aiReply = text.trim();
-              break;
-            }
+            if (text && text.trim().length > 0) { aiReply = text.trim(); break; }
           }
-        } catch {
-          // Continue to next candidate model
-        }
+        } catch { /* try next */ }
       }
     }
 
-    // If Gemini models responded, display live AI response; otherwise use seamless clinical diagnosis
     if (aiReply) {
       addAssistantMessage(aiReply);
     } else {
-      const clinicalFallback = generateSimulatedDiagnosis(
-        query,
-        latest,
-        compositeAQI,
-        aqiLabel,
-        unackAlertsCount
-      );
-      addAssistantMessage(clinicalFallback);
+      addAssistantMessage(generateSimulatedDiagnosis(query, latest, compositeAQI, aqiLabel, unackAlertsCount, nodeOnline));
     }
     setLoading(false);
   };
 
   const addAssistantMessage = (text: string) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: String(Date.now() + 1),
-        sender: 'assistant',
-        text,
-        timestamp: new Date()
-      }
-    ]);
+    setMessages((prev) => [...prev, { id: String(Date.now() + 1), sender: 'assistant', text, timestamp: new Date() }]);
   };
 
   return (
     <>
-      {/* Floating Liquid Glass AI Launcher Pill */}
       <div className="fixed bottom-6 right-6 z-40">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -202,118 +241,66 @@ YOUR MISSION:
             <span className="material-symbols-outlined text-base">auto_awesome</span>
           </div>
           <div className="flex flex-col text-left">
-            <span className="font-label-mono text-xs font-bold text-slate-900 leading-none">
-              AirGuard AI
-            </span>
-            <span className="font-label-mono text-[9px] text-cyan-700 tracking-wider font-semibold">
-              Clinical Telemetry
-            </span>
+            <span className="font-label-mono text-xs font-bold text-slate-900 leading-none">AirGuard AI</span>
+            <span className="font-label-mono text-[9px] text-cyan-700 tracking-wider font-semibold">Clinical Telemetry</span>
           </div>
           <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981] animate-pulse ml-0.5" />
         </button>
       </div>
 
-      {/* Expandable Liquid Glass Chat Console */}
       {isOpen && (
-        <div className="fixed bottom-20 right-4 sm:right-6 w-[94vw] sm:w-[440px] h-[580px] max-h-[82vh] z-50 liquid-glass rounded-[26px] border border-cyan-200/80 shadow-[0_25px_60px_-10px_rgba(2,132,199,0.3),0_0_35px_rgba(0,229,255,0.15)] flex flex-col overflow-hidden animate-startup-1">
-          {/* Header */}
-          <div className="px-4 py-3.5 border-b border-cyan-100/80 bg-white/60 backdrop-blur-md flex items-center justify-between">
+        <div className="fixed bottom-20 right-4 sm:right-6 w-[94vw] sm:w-[460px] h-[600px] max-h-[84vh] z-50 liquid-glass rounded-[26px] border border-cyan-200/80 shadow-[0_25px_60px_-10px_rgba(2,132,199,0.3),0_0_35px_rgba(0,229,255,0.15)] flex flex-col overflow-hidden animate-startup-1">
+          <div className="px-4 py-3.5 border-b border-cyan-100/80 bg-white/60 backdrop-blur-md flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-[0_0_12px_rgba(0,229,255,0.5)]">
                 <span className="material-symbols-outlined text-lg">auto_awesome</span>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <h4 className="font-headline-md text-sm font-bold text-slate-900">
-                    AirGuard Clinical AI
-                  </h4>
-                  <span className="px-1.5 py-0.2 rounded bg-cyan-100 text-cyan-800 text-[9px] font-label-mono font-bold">
-                    Node 01
-                  </span>
+                  <h4 className="font-headline-md text-sm font-bold text-slate-900">AirGuard Clinical AI</h4>
+                  <span className="px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-800 text-[9px] font-label-mono font-bold">Node 01</span>
                 </div>
-                <span className="font-label-mono text-[10px] text-slate-500">
-                  Grounded in live Kongu Hospital telemetry
-                </span>
+                <span className="font-label-mono text-[10px] text-slate-500">Grounded in live Kongu Hospital telemetry</span>
               </div>
             </div>
-
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 font-label-mono text-[10px] font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Gemini 3.8 Active</span>
+                <span>Gemini 2.0</span>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
+              <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer">
                 <span className="material-symbols-outlined text-base">close</span>
               </button>
             </div>
           </div>
 
-          {/* Chat Messages */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 font-body-md text-xs">
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
-              >
-                <div
-                  className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl whitespace-pre-wrap leading-relaxed ${
-                    m.sender === 'user'
-                      ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-sm rounded-br-none'
-                      : 'bg-white/90 border border-cyan-100 text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.04)] rounded-bl-none'
-                  }`}
-                >
-                  {m.text}
-                </div>
-                <span className="text-[9px] font-label-mono text-slate-400 mt-1 px-1">
-                  {m.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-            ))}
-
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 min-h-0">
+            {messages.map((m) => <ChatBubble key={m.id} m={m} />)}
             {loading && (
               <div className="flex items-center gap-2 p-3 bg-white/80 rounded-2xl border border-cyan-100 w-fit">
                 <span className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
-                <span className="font-label-mono text-xs text-cyan-800">
-                  AirGuard analyzing telemetry records...
-                </span>
+                <span className="font-label-mono text-xs text-cyan-800">AirGuard analyzing telemetry records...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompt Chips */}
-          <div className="px-3 py-2 bg-slate-50/70 border-t border-cyan-100/80 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            <button
-              onClick={() => handleSendMessage('Analyze current cleanroom status and ISO compliance')}
-              className="px-2.5 py-1 rounded-full bg-white border border-cyan-200/80 text-cyan-800 font-label-mono text-[10px] hover:bg-cyan-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-2xs"
-            >
-              üìä Telemetry Diagnosis
-            </button>
-            <button
-              onClick={() => handleSendMessage('Explain particulate PM2.5 and dust sensor readings')}
-              className="px-2.5 py-1 rounded-full bg-white border border-cyan-200/80 text-cyan-800 font-label-mono text-[10px] hover:bg-cyan-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-2xs"
-            >
-              üå™Ô∏è Dust PM2.5 Status
-            </button>
-            <button
-              onClick={() => handleSendMessage('How do I export the ISO 14644 Compliance Summary PDF?')}
-              className="px-2.5 py-1 rounded-full bg-white border border-cyan-200/80 text-cyan-800 font-label-mono text-[10px] hover:bg-cyan-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-2xs"
-            >
-              üìÑ How to Export PDF
-            </button>
-            <button
-              onClick={() => handleSendMessage('Explain the ECE Hardware Annunciator LEDs and buzzer')}
-              className="px-2.5 py-1 rounded-full bg-white border border-cyan-200/80 text-cyan-800 font-label-mono text-[10px] hover:bg-cyan-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-2xs"
-            >
-              üü¢ Annunciator LEDs
-            </button>
+          <div className="px-3 py-2 bg-slate-50/70 border-t border-cyan-100/80 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+            {[
+              ['?? Telemetry Diagnosis', 'Analyze current cleanroom status and ISO compliance'],
+              ['??? PM2.5 Status', 'Explain particulate PM2.5 and dust sensor readings'],
+              ['?? Export PDF', 'How do I export the ISO 14644 Compliance Summary PDF?'],
+              ['?? LED Annunciators', 'Explain the ECE Hardware Annunciator LEDs and buzzer'],
+              ['?? Active Alerts', 'What are the active alerts and how do I resolve them?'],
+            ].map(([label, prompt]) => (
+              <button key={label} onClick={() => handleSendMessage(prompt)}
+                className="px-2.5 py-1 rounded-full bg-white border border-cyan-200/80 text-cyan-800 font-label-mono text-[10px] hover:bg-cyan-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-2xs">
+                {label}
+              </button>
+            ))}
           </div>
 
-          {/* Input Bar */}
-          <div className="p-3 bg-white/90 border-t border-cyan-100 flex items-center gap-2">
+          <div className="p-3 bg-white/90 border-t border-cyan-100 flex items-center gap-2 shrink-0">
             <input
               type="text"
               value={inputMessage}
@@ -336,79 +323,34 @@ YOUR MISSION:
   );
 };
 
-function generateSimulatedDiagnosis(
-  query: string,
-  latest: any,
-  score: number,
-  label: string,
-  alertCount: number
-): string {
+function generateSimulatedDiagnosis(query: string, latest: any, score: number, label: string, alertCount: number, nodeOnline: boolean): string {
   const q = query.toLowerCase().trim();
 
-  // Natural greeting handler
   if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ')) {
-    return `üëã **Hello! I am AirGuard AI, your clinical telemetry specialist for Kongu Hospital.**
-
-Current Cleanroom Status:
-‚Ä¢ **Composite AQI**: **${score} / 100** (${label})
-‚Ä¢ **Fine Dust (PM2.5)**: ${latest.dust.toFixed(1)} ¬µg/m¬≥ (Nominal sterile)
-‚Ä¢ **Carbon Dioxide (CO‚ÇÇ)**: ${Math.round(latest.co2)} ppm (Adequate ventilation)
-‚Ä¢ **Ambient Temperature**: ${latest.temperature.toFixed(1)} ¬∞C (ISO standard)
-‚Ä¢ **Relative Humidity**: ${latest.humidity.toFixed(1)} %
-
-How can I assist you with clinical aerometrics, threshold calibration, or ISO compliance reports today?`;
+    return `## Hello! I'\''m AirGuard AI ??\n\n**Kongu Hospital Cleanroom Node 01 ó Live Status**\n\n- **Node Link**: ${nodeOnline ? '?? Online' : '?? Waiting for Node'}\n- **Composite AQI**: **${score} / 100** ó ${label}\n- **PM2.5**: ${latest.dust.toFixed(1)} µg/m≥\n- **CO2**: ${Math.round(latest.co2)} ppm\n- **Temperature**: ${latest.temperature.toFixed(1)} ∞C\n- **Humidity**: ${latest.humidity.toFixed(1)} %\n- **Active Alerts**: ${alertCount}\n\n> How can I assist you with telemetry diagnostics, ISO compliance, or dashboard navigation?`;
   }
 
   if (q.includes('export') || q.includes('pdf') || q.includes('report') || q.includes('csv')) {
-    return `üìÑ **ISO 14644 Compliance Summary Export**:
-You can export compliance audits in two ways:
-1. Navigate to the **Settings tab** (gear icon) -> Scroll to **"ISO 14644 Compliance Audit"** -> Click **"Export ISO Audit PDF"** or **"Download Hospital CSV"**.
-2. Or in the **Recent Hospital Environmental Events** card on the dashboard, click **"Download Hospital CSV"**.
-
-The generated PDF contains formal certification tables, min/max/average limits, and official auditor signature blocks for Kongu Hospital Node 01.`;
+    return `## ISO 14644 Compliance Export Guide\n\n**Two methods to generate your audit report:**\n\n1. Navigate to \`Settings Tab\` (?? gear icon in the sidebar)\n2. Scroll to **"ISO 14644 Compliance Audit"** section\n3. Click **"Export ISO Audit PDF"** ó generates formal certification tables with min/max/avg, node uptime, and auditor signature blocks\n4. Or click **"Download Hospital CSV"** for spreadsheet-compatible raw telemetry data\n\n**Tip:** The CSV is also accessible from the **"Recent Hospital Environmental Events"** card on the main dashboard.\n\n> ?? The PDF includes: Parameter tables, WHO/ISO limit cross-reference, Cleanroom Class certification, and Node 01 identification header.`;
   }
 
-  if (q.includes('led') || q.includes('annunciator') || q.includes('buzzer') || q.includes('green') || q.includes('yellow') || q.includes('red')) {
-    return `üü¢ **ECE Transducer Annunciator Architecture**:
-Node 01 features active hardware annunciators connected to the ESP32:
-‚Ä¢ **GPIO 18 (Green LED)**: Active when CO‚ÇÇ ‚â§ 800 ppm & PM2.5 ‚â§ 25 ¬µg/m¬≥ (Nominal).
-‚Ä¢ **GPIO 19 (Yellow LED)**: Alerts caution when CO‚ÇÇ is 801-1200 ppm or Dust is 26-50 ¬µg/m¬≥.
-‚Ä¢ **GPIO 23 (Red LED)**: Hazards warning when CO‚ÇÇ > 1200 ppm or Dust > 50 ¬µg/m¬≥.
-‚Ä¢ **GPIO 22 (Piezo Buzzer)**: Triggers pulsed 2.4 kHz alarm tone during critical excursions.
-
-Current Annunciator State: **${score >= 75 ? 'Safe Green ACTIVE' : 'Caution / Hazard ADVISORY'}**.`;
+  if (q.includes('led') || q.includes('annunciator') || q.includes('buzzer')) {
+    return `## ECE Hardware Annunciator Architecture\n\n| GPIO | Component | Trigger Condition | ISO State |\n|------|-----------|-------------------|-----------|\n| GPIO 18 | ?? Green LED | CO2 = 800 ppm **and** PM2.5 = 25 µg/m≥ | Nominal |\n| GPIO 19 | ?? Yellow LED | CO2 801ñ1200 ppm **or** PM2.5 26ñ50 µg/m≥ | Caution |\n| GPIO 23 | ?? Red LED | CO2 > 1200 ppm **or** PM2.5 > 50 µg/m≥ | Hazard |\n| GPIO 22 | ?? Piezo Buzzer | Critical threshold breach | 2.4 kHz alarm |\n\n**Current State**: ${score >= 75 ? '?? **Green ó Nominal & Compliant**' : score >= 50 ? '?? **Yellow ó Caution Advisory**' : '?? **Red ó Hazard Warning Active**'}`;
   }
 
   if (q.includes('dust') || q.includes('pm2.5') || q.includes('particle')) {
-    return `üå™Ô∏è **PM2.5 Particulate Analysis**:
-‚Ä¢ **Current Reading**: ${latest.dust.toFixed(1)} ¬µg/m¬≥ (Optical GP2Y1010AU0F on D35/D5).
-‚Ä¢ **Cleanroom ISO Limit**: ‚â§ 25.0 ¬µg/m¬≥ (ISO Class 6 benchmark).
-‚Ä¢ **Diagnosis**: Particulate density is **${latest.dust <= 15 ? 'well within sterile tolerances' : 'elevated'}**. Laminar displacement airflow (0.42 m/s) is actively flushing airborne aerosols toward the HEPA H14 floor extraction grilles.`;
+    const status = latest.dust <= 15 ? '? Well within sterile tolerances' : latest.dust <= 25 ? '?? Approaching upper limit' : '?? ISO B limit exceeded';
+    return `## PM2.5 Particulate Matter Analysis\n\n- **Current Reading**: **${latest.dust.toFixed(1)} µg/m≥** (GP2Y1010AU0F Optical Sensor)\n- **ISO 14644-1 Class B Limit**: = 25.0 µg/m≥\n- **Status**: ${status}\n\n## Root Cause Context\nLaminar displacement airflow at **0.42 m/s** is actively flushing airborne aerosols toward HEPA H14 floor extraction grilles. Differential pressure at **-14.2 Pa** prevents external particulate infiltration.\n\n## Recommendation\n${latest.dust > 25 ? '?? Inspect HEPA filter integrity. Verify airlock seal. Check for unauthorized personnel egress causing particulate incursion.' : '? Continue standard laminar flow protocol. Schedule routine HEPA inspection per ISO 14644-2 ß4.3.'}`;
   }
 
   if (q.includes('threshold') || q.includes('slider') || q.includes('setting')) {
-    return `üéõÔ∏è **Dynamic Threshold Customization**:
-You can customize threshold limits in real time:
-1. Open the **Settings tab** from the left dock or mobile menu.
-2. Under **"Dynamic Ward Aerometrics"**, select a preset (**ISO Cleanroom**, **ICU Critical**, or **General Ward**).
-3. Or adjust the interactive sliders for PM2.5, CO‚ÇÇ, Temperature, and Humidity.
-Changes re-calibrate the AQI dial and annunciator logic immediately!`;
+    return `## Dynamic Threshold Customization\n\n1. Open \`Settings\` from the left sidebar (?? icon)\n2. Scroll to **"Dynamic Ward Aerometrics Thresholds"**\n3. Select a preset:\n   - \`ISO Cleanroom\` ó PM2.5 = 25 µg/m≥, CO2 = 800 ppm\n   - \`ICU Critical\` ó PM2.5 = 10 µg/m≥, CO2 = 600 ppm\n   - \`General Ward\` ó PM2.5 = 50 µg/m≥, CO2 = 1000 ppm\n4. Or use individual **sliders** for PM2.5, CO2, Temperature, and Humidity\n\n> ?? Threshold changes recalibrate the **AQI gauge**, **LED logic**, and **alert triggers** in real time.`;
   }
 
-  const tempValid = typeof latest?.temperature === 'number' && latest.temperature > -40 && latest.temperature < 80;
-  const humValid = typeof latest?.humidity === 'number' && latest.humidity >= 0 && latest.humidity <= 100;
-  const tempDisplay = tempValid ? `${latest.temperature.toFixed(1)} ¬∞C (Stable)` : '21.4 ¬∞C (Calibrating Nominal)';
-  const humDisplay = humValid ? `${latest.humidity.toFixed(1)} % (Within optimal 40-50% envelope)` : '46.2 % (Within optimal 40-50% envelope)';
+  const tempStatus = latest.temperature >= 20 && latest.temperature <= 22 ? '? Normal' : '?? Deviation';
+  const humStatus = latest.humidity >= 40 && latest.humidity <= 50 ? '? Normal' : '?? Deviation';
+  const co2Status = latest.co2 <= 800 ? '? Normal' : '?? Elevated';
+  const dustStatus = latest.dust <= 25 ? '? Normal' : '?? Exceeded';
 
-  // General Status Diagnosis
-  return `üè• **AirGuard Cleanroom Telemetry Assessment (Node 01)**:
-‚Ä¢ **Composite AQI**: **${score} / 100** (${label})
-‚Ä¢ **Ambient Temperature**: ${tempDisplay}
-‚Ä¢ **Relative Humidity**: ${humDisplay}
-‚Ä¢ **Carbon Dioxide**: ${Math.round(latest.co2)} ppm (Adequate air exchange)
-‚Ä¢ **Fine Dust (PM2.5)**: ${latest.dust.toFixed(1)} ¬µg/m¬≥ (Sterile laminar flow intact)
-‚Ä¢ **Differential Pressure**: -14.2 Pa (Negative pressure barrier preventing external pathogen infiltration)
-‚Ä¢ **Active Hospital Alerts**: ${alertCount} unresolved event(s)
-
-**Clinical Recommendation**: All parameters comply with **ISO 14644-1 Grade B Cleanroom specifications**. Continue standard laminar displacement ventilation.`;
+  return `## Cleanroom Telemetry Assessment ó Node 01\n\n**Overall Score**: **${score} / 100** ó ${label}\n\n| Parameter | Reading | ISO Limit | Status |\n|-----------|---------|-----------|--------|\n| Temperature | ${latest.temperature.toFixed(1)} ∞C | 20ñ22 ∞C | ${tempStatus} |\n| Humidity | ${latest.humidity.toFixed(1)} % | 40ñ50 % | ${humStatus} |\n| CO2 | ${Math.round(latest.co2)} ppm | = 800 ppm | ${co2Status} |\n| PM2.5 | ${latest.dust.toFixed(1)} µg/m≥ | = 25.0 µg/m≥ | ${dustStatus} |\n| Differential Pressure | -14.2 Pa | Negative isolation | ? Active |\n| Active Alerts | ${alertCount} | 0 = Compliant | ${alertCount === 0 ? '? Clear' : '?? Review'} |\n\n## Clinical Recommendation\n${score >= 80 ? '? All parameters comply with **ISO 14644-1 Grade B Cleanroom** specifications. Continue standard laminar displacement ventilation.' : '?? One or more parameters require attention. Review deviations above and initiate corrective HVAC inspection per ISO 14644-2 ß4.'}`;
 }
