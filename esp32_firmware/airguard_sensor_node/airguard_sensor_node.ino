@@ -307,7 +307,37 @@ SensorMetrics acquireAllSensors() {
   }
 
   // 2. MQ-135 Gas Sensor Acquisition (Oversampled)
-  m.rawGasAdc   = readOversampledAdc(PIN_MQ135_ADC, 32);
+  m.rawGasAdc = readOversampledAdc(PIN_MQ135_ADC, 32);
+
+  // Diagnostic multi-pin scan if primary pin (GPIO 34) reads 0:
+  if (m.rawGasAdc <= 5) {
+    int v35 = analogRead(35);
+    int v32 = analogRead(32);
+    int v33 = analogRead(33);
+    int v36 = analogRead(36);
+    int v39 = analogRead(39);
+    Serial.printf("  [MQ-135 ADC Scan] D34=%d | D35=%d | D32=%d | D33=%d | VP(36)=%d | VN(39)=%d\n",
+                  m.rawGasAdc, v35, v32, v33, v36, v39);
+    
+    // Auto-adopt pin if user connected to adjacent/alternative ADC1 pin:
+    if (v35 > 30) { 
+      m.rawGasAdc = v35; 
+      Serial.println("  [MQ-135 Auto-Route] ✅ Detected Gas Sensor Voltage on GPIO 35!"); 
+    } else if (v32 > 30) { 
+      m.rawGasAdc = v32; 
+      Serial.println("  [MQ-135 Auto-Route] ✅ Detected Gas Sensor Voltage on GPIO 32!"); 
+    } else if (v33 > 30) { 
+      m.rawGasAdc = v33; 
+      Serial.println("  [MQ-135 Auto-Route] ✅ Detected Gas Sensor Voltage on GPIO 33!"); 
+    } else if (v36 > 30) { 
+      m.rawGasAdc = v36; 
+      Serial.println("  [MQ-135 Auto-Route] ✅ Detected Gas Sensor Voltage on GPIO 36 (VP)!"); 
+    } else if (v39 > 30) { 
+      m.rawGasAdc = v39; 
+      Serial.println("  [MQ-135 Auto-Route] ✅ Detected Gas Sensor Voltage on GPIO 39 (VN)!"); 
+    }
+  }
+
   m.rawGasVolt  = (m.rawGasAdc / (float)ADC_MAX_COUNTS) * ADC_REF_VOLTAGE;
   m.co2Ppm      = computeCompensatedCO2(m.rawGasAdc, m.temperature, m.humidity);
   m.tvocPpb     = (int)(m.rawGasAdc * 0.12f); // Empirical VOC estimation index
