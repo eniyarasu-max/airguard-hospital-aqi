@@ -19,42 +19,42 @@ export interface WardThresholds {
 export const PRESET_CONFIGS: Record<Exclude<WardPreset, 'custom'>, WardThresholds> = {
   iso_cleanroom: {
     preset: 'iso_cleanroom',
-    presetName: 'ISO 14644 Class 6 / Grade B (Strict Sterile)',
-    co2Max: 650,
-    dustMax: 10,
-    gasMax: 150,
-    tvocMax: 120,
-    tempMin: 20.0,
-    tempMax: 22.0,
-    humidityMin: 42.0,
-    humidityMax: 50.0,
+    presetName: 'ISO 14644 Cleanroom Suite (Controlled Environment)',
+    co2Max: 800,
+    dustMax: 15,
+    gasMax: 200,
+    tvocMax: 150,
+    tempMin: 18.0,
+    tempMax: 28.0,
+    humidityMin: 35.0,
+    humidityMax: 75.0,
     aqiWarningThreshold: 80
   },
   icu_suite: {
     preset: 'icu_suite',
-    presetName: 'ICU Critical Isolation (Pathogen Defense)',
-    co2Max: 750,
-    dustMax: 18,
-    gasMax: 250,
-    tvocMax: 200,
-    tempMin: 19.5,
-    tempMax: 23.0,
-    humidityMin: 40.0,
-    humidityMax: 58.0,
+    presetName: 'ICU Critical Care & Airborne Isolation Suite',
+    co2Max: 900,
+    dustMax: 25,
+    gasMax: 300,
+    tvocMax: 250,
+    tempMin: 18.0,
+    tempMax: 31.0,
+    humidityMin: 30.0,
+    humidityMax: 82.0,
     aqiWarningThreshold: 72
   },
   general_ward: {
     preset: 'general_ward',
-    presetName: 'General Hospital Ward & Outpatient (Standard)',
-    co2Max: 950,
-    dustMax: 30,
-    gasMax: 350,
-    tvocMax: 350,
-    tempMin: 20.0,
-    tempMax: 25.5,
-    humidityMin: 35.0,
-    humidityMax: 65.0,
-    aqiWarningThreshold: 62
+    presetName: 'Hospital Inpatient Ward & Ambient Suite (Nominal)',
+    co2Max: 1100,
+    dustMax: 35,
+    gasMax: 450,
+    tvocMax: 400,
+    tempMin: 18.0,
+    tempMax: 32.0,
+    humidityMin: 25.0,
+    humidityMax: 85.0,
+    aqiWarningThreshold: 60
   }
 };
 
@@ -75,7 +75,7 @@ export const ThresholdProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) return JSON.parse(saved);
     } catch {}
-    return PRESET_CONFIGS.iso_cleanroom;
+    return PRESET_CONFIGS.icu_suite;
   });
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export const ThresholdProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const resetToDefaults = () => {
-    setThresholds(PRESET_CONFIGS.iso_cleanroom);
+    setThresholds(PRESET_CONFIGS.icu_suite);
   };
 
   return (

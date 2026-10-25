@@ -381,8 +381,11 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-label-mono text-xs">
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
-                <span className="text-slate-400 text-[10px] block">Raw 12-Bit ADC</span>
-                <span className="text-white font-bold text-sm">{ece.rawGasAdc} <span className="text-[10px] text-slate-500">/ 4095</span></span>
+                <span className="text-slate-400 text-[10px] block">Air Purity Score</span>
+                <span className="text-emerald-400 font-bold text-sm">
+                  {Math.max(0, Math.min(100, Math.round(100 - ((ece.rawGasAdc ?? 0) / 4095) * 100)))
+                  }<span className="text-[10px] text-slate-500"> / 100</span>
+                </span>
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Sensor Output Vo</span>

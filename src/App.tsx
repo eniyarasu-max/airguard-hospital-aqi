@@ -329,15 +329,22 @@ export const App: React.FC = () => {
 
                   <div className="animate-startup-6">
                     <SensorTile
-                      label="Gas MQ-135"
-                      value={primaryRoom?.latest?.gas != null ? (primaryRoom.latest.gas * 0.0001).toFixed(2) : '0.01'}
-                      unit="ppm"
+                      label="Air Purity (VOC)"
+                      value={(() => {
+                        const adc = primaryRoom?.latest?.gas ?? 0;
+                        return Math.max(0, Math.min(100, Math.round(100 - (adc / 4095) * 100)));
+                      })()}
+                      unit="%"
                       icon="verified_user"
-                      badgeText="Safe"
+                      badgeText={(() => {
+                        const adc = primaryRoom?.latest?.gas ?? 0;
+                        const p = Math.max(0, Math.min(100, Math.round(100 - (adc / 4095) * 100)));
+                        return p >= 90 ? 'Pristine' : p >= 75 ? 'Good' : p >= 55 ? 'Fair' : 'Poor';
+                      })()}
                       badgeTone="teal"
-                      rangeLabel="OSHA Safe: <0.10"
-                      trendLabel="Undetectable"
-                      sparklineData={[0.02, 0.01, 0.01, 0.02, 0.01, 0.01]}
+                      rangeLabel="MQ-135 SnO₂ Sensor"
+                      trendLabel="VOC Index"
+                      sparklineData={[87, 88, 87, 86, 87, 87]}
                     />
                   </div>
                 </section>

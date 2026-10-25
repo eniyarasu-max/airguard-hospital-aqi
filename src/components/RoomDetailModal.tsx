@@ -216,20 +216,31 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               </div>
             </div>
 
-            {/* Raw Gas MQ-135 */}
+            {/* MQ-135 Air Purity Rating */}
             <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-slate-400">
                 <span className="material-symbols-outlined text-lg text-purple-600">sensors</span>
-                <span className="font-label-mono text-[10px] text-purple-700 font-bold">MQ-135</span>
+                <span className="font-label-mono text-[10px] text-purple-700 font-bold">VOC / MQ-135</span>
               </div>
               <div className="my-2">
-                <span className="font-label-numeric-lg text-2xl font-bold text-slate-900">
-                  {room.latest.gas}
-                </span>
-                <span className="text-xs text-slate-400 ml-1">raw</span>
+                {(() => {
+                  // Map raw 12-bit ADC (0-4095) to Air Purity % (100% = cleanest)
+                  const adcVal = room.latest.gas ?? 0;
+                  const purity = Math.max(0, Math.min(100, Math.round(100 - (adcVal / 4095) * 100)));
+                  const label = purity >= 90 ? 'Pristine' : purity >= 75 ? 'Good' : purity >= 55 ? 'Fair' : 'Poor';
+                  const color = purity >= 90 ? 'text-emerald-600' : purity >= 75 ? 'text-teal-600' : purity >= 55 ? 'text-amber-600' : 'text-rose-600';
+                  return (
+                    <>
+                      <span className={`font-label-numeric-lg text-2xl font-bold ${color}`}>
+                        {purity}
+                      </span>
+                      <span className="text-xs text-slate-400 ml-1">% · {label}</span>
+                    </>
+                  );
+                })()}
               </div>
               <div className="text-[10px] font-label-mono text-slate-400 border-t border-slate-100 pt-1">
-                Baseline Gas Index
+                Air Purity Index (100 = Pristine)
               </div>
             </div>
           </div>

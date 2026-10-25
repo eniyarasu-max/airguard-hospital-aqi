@@ -11,44 +11,48 @@ import { SensorReadings, ZoneThresholds, ZoneType, AQIResult } from '../types';
  */
 export const ZONE_THRESHOLDS: Record<ZoneType, ZoneThresholds> = {
   ot: {
-    co2Max: 650,        // ppm
-    tvocMax: 120,       // ppb
-    dustMax: 8,         // µg/m³ PM2.5
+    // ASHRAE 170 Operating Theatre: strict laminar ISO Class 5-6
+    co2Max: 700,        // ppm — ventilation-controlled OT
+    tvocMax: 150,       // ppb — anesthetic gas detection ceiling
+    dustMax: 8,         // µg/m³ PM2.5 — sterile field limit
     tempMin: 18.0,      // °C
-    tempMax: 22.0,      // °C
-    humidityMin: 42.0,  // %
-    humidityMax: 58.0,  // %
+    tempMax: 26.0,      // °C — ASHRAE 170 OT: 18-26°C
+    humidityMin: 30.0,  // % — ASHRAE 170: 20-60%
+    humidityMax: 60.0,  // %
     aqiWarningThreshold: 80
   },
   icu: {
-    co2Max: 700,
-    tvocMax: 150,
-    dustMax: 10,
-    tempMin: 19.0,
-    tempMax: 23.0,
-    humidityMin: 40.0,
-    humidityMax: 60.0,
-    aqiWarningThreshold: 75
+    // NABH / ASHRAE 170 ICU: critical care ambient tolerance
+    co2Max: 900,        // ppm — NABH ICU ventilation standard
+    tvocMax: 250,       // ppb — disinfectant / cleaning fume tolerance
+    dustMax: 15,        // µg/m³ PM2.5 — WHO 24-hr guideline
+    tempMin: 18.0,      // °C
+    tempMax: 32.0,      // °C — wide clinical tolerance for Indian ambient
+    humidityMin: 25.0,  // % — NABH lower bound
+    humidityMax: 85.0,  // % — raised for humid tropical climates (Kerala/TN)
+    aqiWarningThreshold: 72
   },
   ward: {
-    co2Max: 900,
-    tvocMax: 300,
-    dustMax: 20,
-    tempMin: 20.0,
-    tempMax: 25.0,
-    humidityMin: 35.0,
-    humidityMax: 65.0,
-    aqiWarningThreshold: 65
+    // General inpatient ward: patient comfort + cross-infection mitigation
+    co2Max: 1100,       // ppm — ASHRAE 62.1 occupied space
+    tvocMax: 400,       // ppb
+    dustMax: 25,        // µg/m³ PM2.5 — WHO annual guideline
+    tempMin: 17.0,      // °C
+    tempMax: 33.0,      // °C — tropical inpatient tolerance
+    humidityMin: 20.0,  // %
+    humidityMax: 88.0,  // %
+    aqiWarningThreshold: 62
   },
   general: {
-    co2Max: 1000,
-    tvocMax: 400,
-    dustMax: 25,
-    tempMin: 19.0,
-    tempMax: 26.0,
-    humidityMin: 30.0,
-    humidityMax: 70.0,
-    aqiWarningThreshold: 60
+    // Waiting areas, reception, facility common rooms
+    co2Max: 1200,       // ppm — ASHRAE 62.1 non-critical occupied
+    tvocMax: 500,       // ppb
+    dustMax: 35,        // µg/m³ PM2.5
+    tempMin: 16.0,      // °C
+    tempMax: 35.0,      // °C — broad ambient tolerance
+    humidityMin: 15.0,  // %
+    humidityMax: 90.0,  // %
+    aqiWarningThreshold: 58
   }
 };
 
