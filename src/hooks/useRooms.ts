@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ref, onValue, off } from 'firebase/database';
 import { database, isFirebaseConfigured } from '../firebase';
-import { RoomData, SensorReadings } from '../types';
+import { RoomData, SensorReadings, EceDiagnostics } from '../types';
 import { INITIAL_MOCK_ROOMS, simulateRoomUpdate } from '../utils/mockData';
 import { evaluateHardwareIndicators, computeEceDiagnostics } from '../utils/eceCalculations';
 
