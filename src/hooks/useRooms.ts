@@ -84,9 +84,12 @@ export function useRooms() {
               val.latest?.indicators ||
               evaluateHardwareIndicators(latestReadings.co2, latestReadings.dust, latestReadings.gas);
 
-            const ece = val.ece ||
-              val.latest?.ece ||
-              computeEceDiagnostics(latestReadings);
+            const baseEce = computeEceDiagnostics(latestReadings);
+            const ece: EceDiagnostics = {
+              ...baseEce,
+              ...(val.ece || {}),
+              ...(val.latest?.ece || {})
+            };
 
             latestReadings.indicators = indicators;
             latestReadings.ece = ece;

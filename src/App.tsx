@@ -259,7 +259,7 @@ export const App: React.FC = () => {
                   <div className="animate-startup-4">
                     <SensorTile
                       label="Ambient Temp"
-                      value={primaryRoom ? primaryRoom.latest.temperature.toFixed(1) : 21.4}
+                      value={primaryRoom?.latest?.temperature != null ? primaryRoom.latest.temperature.toFixed(1) : 21.4}
                       unit="°C"
                       icon="thermostat"
                       badgeText="Ideal"
@@ -273,7 +273,7 @@ export const App: React.FC = () => {
                   <div className="animate-startup-4">
                     <SensorTile
                       label="Relative RH"
-                      value={primaryRoom ? primaryRoom.latest.humidity : 46}
+                      value={primaryRoom?.latest?.humidity ?? 46}
                       unit="%"
                       icon="humidity_mid"
                       badgeText="Optimal"
@@ -288,7 +288,7 @@ export const App: React.FC = () => {
                   <div className="animate-startup-5">
                     <SensorTile
                       label="Carbon Dioxide"
-                      value={primaryRoom ? primaryRoom.latest.co2 : 418}
+                      value={primaryRoom?.latest?.co2 ?? 418}
                       unit="ppm"
                       icon="air"
                       badgeText="Clean"
@@ -302,7 +302,7 @@ export const App: React.FC = () => {
                   <div className="animate-startup-5">
                     <SensorTile
                       label="TVOC Vapor"
-                      value={primaryRoom ? (primaryRoom.latest.tvoc * 0.001).toFixed(2) : '0.04'}
+                      value={primaryRoom?.latest?.tvoc != null ? (primaryRoom.latest.tvoc * 0.001).toFixed(2) : '0.04'}
                       unit="mg/m³"
                       icon="science"
                       badgeText="Pristine"
@@ -316,7 +316,7 @@ export const App: React.FC = () => {
                   <div className="animate-startup-6">
                     <SensorTile
                       label="Dust PM2.5"
-                      value={primaryRoom ? primaryRoom.latest.dust : 2.8}
+                      value={primaryRoom?.latest?.dust != null ? primaryRoom.latest.dust : 2.8}
                       unit="µg/m³"
                       icon="grain"
                       badgeText="Grade A"
@@ -330,7 +330,7 @@ export const App: React.FC = () => {
                   <div className="animate-startup-6">
                     <SensorTile
                       label="Gas MQ-135"
-                      value={primaryRoom ? (primaryRoom.latest.gas * 0.0001).toFixed(2) : '0.01'}
+                      value={primaryRoom?.latest?.gas != null ? (primaryRoom.latest.gas * 0.0001).toFixed(2) : '0.01'}
                       unit="ppm"
                       icon="verified_user"
                       badgeText="Safe"

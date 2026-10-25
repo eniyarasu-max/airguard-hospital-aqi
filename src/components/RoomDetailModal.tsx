@@ -190,7 +190,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               </div>
               <div className="my-2">
                 <span className="font-label-numeric-lg text-2xl font-bold text-slate-900">
-                  {room.latest.temperature.toFixed(1)}
+                  {(room.latest?.temperature ?? 21.4).toFixed(1)}
                 </span>
                 <span className="text-xs text-slate-400 ml-1">°C</span>
               </div>

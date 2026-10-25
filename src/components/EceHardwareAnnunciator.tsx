@@ -25,7 +25,12 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
     { co2Max: thresholds.co2Max, dustMax: thresholds.dustMax, gasMax: thresholds.gasMax }
   );
 
-  const ece: EceDiagnostics = room?.ece || (latest?.ece) || computeEceDiagnostics(latest || {});
+  const baseEce = computeEceDiagnostics(latest || {});
+  const ece: EceDiagnostics = {
+    ...baseEce,
+    ...(room?.ece || {}),
+    ...(latest?.ece || {})
+  };
 
   // Alarm sound synthesizer via Web Audio API (2400 Hz hospital buzzer tone)
   const shouldBeep = (indicators.buzzer || isTestAlarmActive) && !audioMuted;
@@ -365,11 +370,11 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Sensor Output Vo</span>
-                <span className="text-amber-300 font-bold text-sm">{ece.gasVoltage.toFixed(2)} <span className="text-[10px] text-slate-500">V</span></span>
+                <span className="text-amber-300 font-bold text-sm">{(ece.gasVoltage ?? 1.12).toFixed(2)} <span className="text-[10px] text-slate-500">V</span></span>
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Temp/RH Comp Cf</span>
-                <span className="text-teal-400 font-bold text-sm">{ece.rhCompFactor.toFixed(3)} <span className="text-[10px] text-slate-500">x</span></span>
+                <span className="text-teal-400 font-bold text-sm">{(ece.rhCompFactor ?? 1.0).toFixed(3)} <span className="text-[10px] text-slate-500">x</span></span>
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Compensated CO₂</span>
@@ -377,7 +382,7 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
               </div>
             </div>
             <div className="mt-2 text-[10px] font-label-mono text-slate-400 flex items-center justify-between">
-              <span>Rs/R0 Ratio: {ece.rsR0Ratio} (Clean air R0 = 76.63 kΩ)</span>
+              <span>Rs/R0 Ratio: {ece.rsR0Ratio ?? '1.24'} (Clean air R0 = 76.63 kΩ)</span>
               <span>TVOC Index: {latest?.tvoc ?? 45} ppb</span>
             </div>
           </div>
@@ -401,7 +406,7 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Sampled Vo</span>
-                <span className="text-sky-300 font-bold text-sm">{ece.dustVoltage.toFixed(2)} <span className="text-[10px] text-slate-500">V</span></span>
+                <span className="text-sky-300 font-bold text-sm">{(ece.dustVoltage ?? 0.62).toFixed(2)} <span className="text-[10px] text-slate-500">V</span></span>
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Clean Air Offset</span>
@@ -409,7 +414,7 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Filtered PM2.5</span>
-                <span className="text-emerald-400 font-bold text-sm">{latest?.dust?.toFixed(1) ?? '2.8'} <span className="text-[10px] text-slate-500">µg/m³</span></span>
+                <span className="text-emerald-400 font-bold text-sm">{latest?.dust != null ? latest.dust.toFixed(1) : '2.8'} <span className="text-[10px] text-slate-500">µg/m³</span></span>
               </div>
             </div>
             <div className="mt-2 text-[10px] font-label-mono text-slate-400 flex items-center justify-between">
@@ -433,11 +438,11 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-label-mono text-xs">
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Temperature</span>
-                <span className="text-teal-300 font-bold text-sm">{latest?.temperature?.toFixed(1) ?? '21.4'} <span className="text-[10px] text-slate-500">°C</span></span>
+                <span className="text-teal-300 font-bold text-sm">{latest?.temperature != null ? latest.temperature.toFixed(1) : '21.4'} <span className="text-[10px] text-slate-500">°C</span></span>
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Fahrenheit</span>
-                <span className="text-white font-bold text-sm">{latest ? ((latest.temperature * 1.8) + 32).toFixed(1) : '70.5'} <span className="text-[10px] text-slate-500">°F</span></span>
+                <span className="text-white font-bold text-sm">{latest?.temperature != null ? ((latest.temperature * 1.8) + 32).toFixed(1) : '70.5'} <span className="text-[10px] text-slate-500">°F</span></span>
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Relative Humidity</span>
@@ -445,7 +450,7 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
               </div>
               <div className="p-2 rounded bg-slate-900/90 border border-slate-800">
                 <span className="text-slate-400 text-[10px] block">Magnus Dew Point</span>
-                <span className="text-indigo-300 font-bold text-sm">{ece.dewPoint.toFixed(1)} <span className="text-[10px] text-slate-500">°C</span></span>
+                <span className="text-indigo-300 font-bold text-sm">{(ece.dewPoint ?? 9.8).toFixed(1)} <span className="text-[10px] text-slate-500">°C</span></span>
               </div>
             </div>
           </div>

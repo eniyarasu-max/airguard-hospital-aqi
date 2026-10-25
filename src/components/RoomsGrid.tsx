@@ -119,7 +119,7 @@ export const RoomsGrid: React.FC<RoomsGridProps> = ({
                 <div className="flex flex-col border-x border-slate-200/80">
                   <span className="font-label-mono text-[10px] text-slate-400 font-bold">TEMP</span>
                   <span className="font-headline-md text-xl md:text-2xl font-light text-slate-900 tabular-nums">
-                    {room.latest.temperature.toFixed(1)}°
+                    {(room.latest?.temperature ?? 21.4).toFixed(1)}°
                   </span>
                 </div>
                 <div className="flex flex-col">
