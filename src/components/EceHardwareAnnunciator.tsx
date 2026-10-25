@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ref, set } from 'firebase/database';
+import { database } from '../firebase';
 import { RoomData, HardwareIndicators, EceDiagnostics } from '../types';
 import { evaluateHardwareIndicators, computeEceDiagnostics } from '../utils/eceCalculations';
 import { useThresholds } from '../context/ThresholdContext';
@@ -85,10 +87,20 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
     }
   }, [shouldBeep]);
 
-  // Audio test toggle
+  // Audio test toggle & physical ESP32 buzzer trigger
   const toggleTestAlarm = () => {
     setAudioMuted(false);
     setIsTestAlarmActive(true);
+
+    // Trigger physical ESP32 buzzer via Firebase Realtime Database
+    if (database) {
+      const roomId = room?.id || 'icu';
+      const buzzerRef = ref(database, `rooms/${roomId}/control/buzzerTrigger`);
+      set(buzzerRef, true).catch((err) => {
+        console.warn('[AirGuard] Remote buzzer trigger error:', err);
+      });
+    }
+
     setTimeout(() => {
       setIsTestAlarmActive(false);
     }, 2000);

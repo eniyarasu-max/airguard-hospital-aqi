@@ -148,6 +148,8 @@ enum AnnunciatorState {
 // Function forward declarations
 int readOversampledAdc(uint8_t pin, int samples = ADC_OVERSAMPLES);
 AnnunciatorState updateHardwareAnnunciators(float co2Ppm, float dustDensity, int rawGas);
+void soundBuzzer(int durationMs = 250, int frequencyHz = 2400);
+void checkRemoteControlCommands();
 
 // ════════════════════════════════════════════════════════════════════════════
 // 5. HARDWARE-LEVEL SIGNAL PROCESSING & SAMPLING
@@ -322,7 +324,42 @@ SensorMetrics acquireAllSensors() {
 // 7. ECE TRI-STATE HARDWARE ANNUNCIATOR & ACOUSTIC SOUNDER LOGIC
 // ════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Drive Piezo Acoustic Alarm (supports both Active & Passive buzzers).
+ * Generates square pulses at frequencyHz for durationMs.
+ */
+void soundBuzzer(int durationMs, int frequencyHz) {
+  int halfPeriodUs = 1000000 / (frequencyHz * 2);
+  int cycles = (durationMs * 1000) / (halfPeriodUs * 2);
+  for (int i = 0; i < cycles; i++) {
+    digitalWrite(PIN_BUZZER, HIGH);
+    delayMicroseconds(halfPeriodUs);
+    digitalWrite(PIN_BUZZER, LOW);
+    delayMicroseconds(halfPeriodUs);
+  }
+}
 
+/**
+ * Check Firebase RTDB /rooms/{ROOM_ID}/control/buzzerTrigger.
+ * When triggered from the web dashboard, sounds physical buzzer and resets flag.
+ */
+void checkRemoteControlCommands() {
+  if (!Firebase.ready()) return;
+
+  String triggerPath = "/rooms/" + String(ROOM_ID) + "/control/buzzerTrigger";
+  if (Firebase.RTDB.getBool(&fbdo, triggerPath.c_str())) {
+    if (fbdo.boolData() == true) {
+      Serial.println("\n  [Remote Control] 🔔 Remote Buzzer Test Command Received from Dashboard!");
+      // Double audible alert chirp
+      soundBuzzer(150, 2400);
+      delay(80);
+      soundBuzzer(250, 2400);
+      // Reset trigger flag in Firebase RTDB
+      Firebase.RTDB.setBool(&fbdo, triggerPath.c_str(), false);
+      Serial.println("  [Remote Control] ✅ Buzzer Trigger Handled & Reset in Cloud RTDB");
+    }
+  }
+}
 
 AnnunciatorState updateHardwareAnnunciators(float co2Ppm, float dustDensity, int rawGas) {
   AnnunciatorState state;
@@ -359,13 +396,7 @@ AnnunciatorState updateHardwareAnnunciators(float co2Ppm, float dustDensity, int
       digitalWrite(PIN_LED_YELLOW, LOW);
       digitalWrite(PIN_LED_RED, HIGH);
       // Audible pulse alert for critical atmospheric breach (2.4 kHz piezo tone or pulse)
-      // Supports both active buzzers (DC high) and passive buzzers (tone / square pulse)
-      for (int i = 0; i < 150; i++) {
-        digitalWrite(PIN_BUZZER, HIGH);
-        delayMicroseconds(208); // 2400 Hz half-period (~416µs total period)
-        digitalWrite(PIN_BUZZER, LOW);
-        delayMicroseconds(208);
-      }
+      soundBuzzer(150, 2400);
       break;
   }
 
@@ -503,13 +534,15 @@ void setup() {
   pinMode(PIN_LED_RED, OUTPUT);
   pinMode(PIN_BUZZER, OUTPUT);
 
-  // Fast Power-On Self-Test (POST) LED Annunciator Walk
+  // Fast Power-On Self-Test (POST) LED Annunciator Walk & Buzzer Test
   digitalWrite(PIN_LED_GREEN, HIGH);
   delay(120);
   digitalWrite(PIN_LED_YELLOW, HIGH);
   delay(120);
   digitalWrite(PIN_LED_RED, HIGH);
   delay(120);
+  // Audible POST confirmation chirp on PIN_BUZZER (GPIO 22)
+  soundBuzzer(150, 2400);
   digitalWrite(PIN_LED_GREEN, LOW);
   digitalWrite(PIN_LED_YELLOW, LOW);
   digitalWrite(PIN_LED_RED, LOW);
@@ -637,6 +670,13 @@ void loop() {
 
     // 5. Power-Optimized Push to Firebase (Including Annunciator State)
     pushClinicalTelemetry(metrics, annState, shouldWriteHistory);
+  }
+
+  // 6. Fast Check for Remote Commands from Dashboard (e.g. Buzzer Test)
+  static uint32_t s_lastControlPollMs = 0;
+  if (currentMs - s_lastControlPollMs >= 1000) {
+    s_lastControlPollMs = currentMs;
+    checkRemoteControlCommands();
   }
 
   // Low-power yield to system idle task (allows RTOS & Wi-Fi power-save sleep)
