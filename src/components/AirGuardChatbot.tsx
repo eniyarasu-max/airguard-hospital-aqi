@@ -134,7 +134,7 @@ export const AirGuardChatbot: React.FC<AirGuardChatbotProps> = ({
     {
       id: 'welcome',
       sender: 'assistant',
-      text: `## Hello, I'\''m AirGuard AI ??\n\nI'\''m your **clinical hospital air quality & biocontrol telemetry specialist** for **Kongu Hospital & Research Institute**.\n\n**Current Node 01 Status**\n- Node Link: **${nodeOnline ? '?? ONLINE' : '?? WAITING FOR NODE'}**\n- Composite AQI: **${compositeAQI} / 100 — ${aqiLabel}**\n\n> I am continuously monitoring **Cleanroom Suite Node 01** (ESP32-DEVKITV1) and grounded in live telemetry.\n\nAsk me to **diagnose telemetry deviations**, verify **ISO 14644-1 cleanroom standards**, or guide you through any feature of the dashboard.`,
+      text: `## Hello, I'\''m AirGuard AI ðŸ‘‹\n\nI'\''m your **clinical hospital air quality & biocontrol telemetry specialist** for **Kongu Hospital & Research Institute**.\n\n**Current Node 01 Status**\n- Node Link: **${nodeOnline ? 'ðŸŸ¢ ONLINE' : 'ðŸ”´ WAITING FOR NODE'}**\n- Composite AQI: **${compositeAQI} / 100 ï¿½ ${aqiLabel}**\n\n> I am continuously monitoring **Cleanroom Suite Node 01** (ESP32-DEVKITV1) and grounded in live telemetry.\n\nAsk me to **diagnose telemetry deviations**, verify **ISO 14644-1 cleanroom standards**, or guide you through any feature of the dashboard.`,
       timestamp: new Date()
     }
   ]);
@@ -168,12 +168,12 @@ export const AirGuardChatbot: React.FC<AirGuardChatbotProps> = ({
 
     const systemPrompt = `You are AirGuard, a precision clinical indoor air quality AI and biomedical telemetry assistant at Kongu Hospital & Research Institute, engineered by ENIYAN (ECE Department).
 
-## LIVE TELEMETRY — NODE 01
+## LIVE TELEMETRY ï¿½ NODE 01
 | Parameter | Value | ISO Limit | Status |
 |-----------|-------|-----------|--------|
-| Node State | ${nodeOnline ? 'ONLINE' : 'WAITING'} | — | ${nodeOnline ? 'Connected' : 'Offline'} |
-| Temperature | ${latest.temperature.toFixed(1)} °C | 20–22 °C | ${latest.temperature >= 20 && latest.temperature <= 22 ? 'Normal' : 'DEVIATION'} |
-| Humidity | ${latest.humidity.toFixed(1)} % | 40–50 % | ${latest.humidity >= 40 && latest.humidity <= 50 ? 'Normal' : 'DEVIATION'} |
+| Node State | ${nodeOnline ? 'ONLINE' : 'WAITING'} | ï¿½ | ${nodeOnline ? 'Connected' : 'Offline'} |
+| Temperature | ${latest.temperature.toFixed(1)} ï¿½C | 20ï¿½22 ï¿½C | ${latest.temperature >= 20 && latest.temperature <= 22 ? 'Normal' : 'DEVIATION'} |
+| Humidity | ${latest.humidity.toFixed(1)} % | 40ï¿½50 % | ${latest.humidity >= 40 && latest.humidity <= 50 ? 'Normal' : 'DEVIATION'} |
 | CO2 | ${Math.round(latest.co2)} ppm | =800 ppm | ${latest.co2 <= 800 ? 'Normal' : 'ELEVATED'} |
 | PM2.5 | ${latest.dust.toFixed(1)} ug/m3 | =25.0 ug/m3 | ${latest.dust <= 25 ? 'Normal' : 'EXCEEDED'} |
 | TVOC | ${(latest.tvoc * 0.001).toFixed(3)} mg/m3 | =0.30 mg/m3 | ${latest.tvoc * 0.001 <= 0.3 ? 'Normal' : 'HIGH'} |
@@ -204,7 +204,7 @@ Always respond in structured Markdown:
               body: JSON.stringify({
                 systemInstruction: { parts: [{ text: systemPrompt }] },
                 contents: [{ role: 'user', parts: [{ text: query }] }],
-                generationConfig: { temperature: 0.3, topP: 0.85, maxOutputTokens: 600 }
+                generationConfig: { temperature: 0.3, topP: 0.85, maxOutputTokens: 2048 }
               })
             }
           );
@@ -287,11 +287,11 @@ Always respond in structured Markdown:
 
           <div className="px-3 py-2 bg-slate-50/70 border-t border-cyan-100/80 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
             {[
-              ['?? Telemetry Diagnosis', 'Analyze current cleanroom status and ISO compliance'],
-              ['??? PM2.5 Status', 'Explain particulate PM2.5 and dust sensor readings'],
-              ['?? Export PDF', 'How do I export the ISO 14644 Compliance Summary PDF?'],
-              ['?? LED Annunciators', 'Explain the ECE Hardware Annunciator LEDs and buzzer'],
-              ['?? Active Alerts', 'What are the active alerts and how do I resolve them?'],
+              ['ðŸ“Š Telemetry Diagnosis', 'Analyze current cleanroom status and ISO compliance'],
+              ['ðŸŒªï¸ PM2.5 Status', 'Explain particulate PM2.5 and dust sensor readings'],
+              ['ðŸ“„ Export PDF', 'How do I export the ISO 14644 Compliance Summary PDF?'],
+              ['ðŸŸ¢ LED Annunciators', 'Explain the ECE Hardware Annunciator LEDs and buzzer'],
+              ['ðŸš¨ Active Alerts', 'What are the active alerts and how do I resolve them?'],
             ].map(([label, prompt]) => (
               <button key={label} onClick={() => handleSendMessage(prompt)}
                 className="px-2.5 py-1 rounded-full bg-white border border-cyan-200/80 text-cyan-800 font-label-mono text-[10px] hover:bg-cyan-50 active:scale-95 transition-all shrink-0 cursor-pointer shadow-2xs">
@@ -327,30 +327,30 @@ function generateSimulatedDiagnosis(query: string, latest: any, score: number, l
   const q = query.toLowerCase().trim();
 
   if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ')) {
-    return `## Hello! I'\''m AirGuard AI ??\n\n**Kongu Hospital Cleanroom Node 01 — Live Status**\n\n- **Node Link**: ${nodeOnline ? '?? Online' : '?? Waiting for Node'}\n- **Composite AQI**: **${score} / 100** — ${label}\n- **PM2.5**: ${latest.dust.toFixed(1)} µg/m³\n- **CO2**: ${Math.round(latest.co2)} ppm\n- **Temperature**: ${latest.temperature.toFixed(1)} °C\n- **Humidity**: ${latest.humidity.toFixed(1)} %\n- **Active Alerts**: ${alertCount}\n\n> How can I assist you with telemetry diagnostics, ISO compliance, or dashboard navigation?`;
+    return `## Hello! I'\''m AirGuard AI ðŸ‘‹\n\n**Kongu Hospital Cleanroom Node 01 ï¿½ Live Status**\n\n- **Node Link**: ${nodeOnline ? 'âœ… Online' : 'âœ… Waiting for Node'}\n- **Composite AQI**: **${score} / 100** ï¿½ ${label}\n- **PM2.5**: ${latest.dust.toFixed(1)} ï¿½g/mï¿½\n- **CO2**: ${Math.round(latest.co2)} ppm\n- **Temperature**: ${latest.temperature.toFixed(1)} ï¿½C\n- **Humidity**: ${latest.humidity.toFixed(1)} %\n- **Active Alerts**: ${alertCount}\n\n> How can I assist you with telemetry diagnostics, ISO compliance, or dashboard navigation?`;
   }
 
   if (q.includes('export') || q.includes('pdf') || q.includes('report') || q.includes('csv')) {
-    return `## ISO 14644 Compliance Export Guide\n\n**Two methods to generate your audit report:**\n\n1. Navigate to \`Settings Tab\` (?? gear icon in the sidebar)\n2. Scroll to **"ISO 14644 Compliance Audit"** section\n3. Click **"Export ISO Audit PDF"** — generates formal certification tables with min/max/avg, node uptime, and auditor signature blocks\n4. Or click **"Download Hospital CSV"** for spreadsheet-compatible raw telemetry data\n\n**Tip:** The CSV is also accessible from the **"Recent Hospital Environmental Events"** card on the main dashboard.\n\n> ?? The PDF includes: Parameter tables, WHO/ISO limit cross-reference, Cleanroom Class certification, and Node 01 identification header.`;
+    return `## ISO 14644 Compliance Export Guide\n\n**Two methods to generate your audit report:**\n\n1. Navigate to \`Settings Tab\` (âš™ï¸ gear icon in the sidebar)\n2. Scroll to **"ISO 14644 Compliance Audit"** section\n3. Click **"Export ISO Audit PDF"** ï¿½ generates formal certification tables with min/max/avg, node uptime, and auditor signature blocks\n4. Or click **"Download Hospital CSV"** for spreadsheet-compatible raw telemetry data\n\n**Tip:** The CSV is also accessible from the **"Recent Hospital Environmental Events"** card on the main dashboard.\n\n> ðŸ“‹ The PDF includes: Parameter tables, WHO/ISO limit cross-reference, Cleanroom Class certification, and Node 01 identification header.`;
   }
 
   if (q.includes('led') || q.includes('annunciator') || q.includes('buzzer')) {
-    return `## ECE Hardware Annunciator Architecture\n\n| GPIO | Component | Trigger Condition | ISO State |\n|------|-----------|-------------------|-----------|\n| GPIO 18 | ?? Green LED | CO2 = 800 ppm **and** PM2.5 = 25 µg/m³ | Nominal |\n| GPIO 19 | ?? Yellow LED | CO2 801–1200 ppm **or** PM2.5 26–50 µg/m³ | Caution |\n| GPIO 23 | ?? Red LED | CO2 > 1200 ppm **or** PM2.5 > 50 µg/m³ | Hazard |\n| GPIO 22 | ?? Piezo Buzzer | Critical threshold breach | 2.4 kHz alarm |\n\n**Current State**: ${score >= 75 ? '?? **Green — Nominal & Compliant**' : score >= 50 ? '?? **Yellow — Caution Advisory**' : '?? **Red — Hazard Warning Active**'}`;
+    return `## ECE Hardware Annunciator Architecture\n\n| GPIO | Component | Trigger Condition | ISO State |\n|------|-----------|-------------------|-----------|\n| GPIO 18 | ðŸŸ¢ Green LED | CO2 = 800 ppm **and** PM2.5 = 25 ï¿½g/mï¿½ | Nominal |\n| GPIO 19 | ðŸŸ¡ Yellow LED | CO2 801ï¿½1200 ppm **or** PM2.5 26ï¿½50 ï¿½g/mï¿½ | Caution |\n| GPIO 23 | ðŸ”´ Red LED | CO2 > 1200 ppm **or** PM2.5 > 50 ï¿½g/mï¿½ | Hazard |\n| GPIO 22 | ðŸ”” Piezo Buzzer | Critical threshold breach | 2.4 kHz alarm |\n\n**Current State**: ${score >= 75 ? 'âœ… **Green ï¿½ Nominal & Compliant**' : score >= 50 ? 'âœ… **Yellow ï¿½ Caution Advisory**' : 'âœ… **Red ï¿½ Hazard Warning Active**'}`;
   }
 
   if (q.includes('dust') || q.includes('pm2.5') || q.includes('particle')) {
-    const status = latest.dust <= 15 ? '? Well within sterile tolerances' : latest.dust <= 25 ? '?? Approaching upper limit' : '?? ISO B limit exceeded';
-    return `## PM2.5 Particulate Matter Analysis\n\n- **Current Reading**: **${latest.dust.toFixed(1)} µg/m³** (GP2Y1010AU0F Optical Sensor)\n- **ISO 14644-1 Class B Limit**: = 25.0 µg/m³\n- **Status**: ${status}\n\n## Root Cause Context\nLaminar displacement airflow at **0.42 m/s** is actively flushing airborne aerosols toward HEPA H14 floor extraction grilles. Differential pressure at **-14.2 Pa** prevents external particulate infiltration.\n\n## Recommendation\n${latest.dust > 25 ? '?? Inspect HEPA filter integrity. Verify airlock seal. Check for unauthorized personnel egress causing particulate incursion.' : '? Continue standard laminar flow protocol. Schedule routine HEPA inspection per ISO 14644-2 §4.3.'}`;
+    const status = latest.dust <= 15 ? '? Well within sterile tolerances' : latest.dust <= 25 ? 'âœ… Approaching upper limit' : 'âœ… ISO B limit exceeded';
+    return `## PM2.5 Particulate Matter Analysis\n\n- **Current Reading**: **${latest.dust.toFixed(1)} ï¿½g/mï¿½** (GP2Y1010AU0F Optical Sensor)\n- **ISO 14644-1 Class B Limit**: = 25.0 ï¿½g/mï¿½\n- **Status**: ${status}\n\n## Root Cause Context\nLaminar displacement airflow at **0.42 m/s** is actively flushing airborne aerosols toward HEPA H14 floor extraction grilles. Differential pressure at **-14.2 Pa** prevents external particulate infiltration.\n\n## Recommendation\n${latest.dust > 25 ? 'âœ… Inspect HEPA filter integrity. Verify airlock seal. Check for unauthorized personnel egress causing particulate incursion.' : '? Continue standard laminar flow protocol. Schedule routine HEPA inspection per ISO 14644-2 ï¿½4.3.'}`;
   }
 
   if (q.includes('threshold') || q.includes('slider') || q.includes('setting')) {
-    return `## Dynamic Threshold Customization\n\n1. Open \`Settings\` from the left sidebar (?? icon)\n2. Scroll to **"Dynamic Ward Aerometrics Thresholds"**\n3. Select a preset:\n   - \`ISO Cleanroom\` — PM2.5 = 25 µg/m³, CO2 = 800 ppm\n   - \`ICU Critical\` — PM2.5 = 10 µg/m³, CO2 = 600 ppm\n   - \`General Ward\` — PM2.5 = 50 µg/m³, CO2 = 1000 ppm\n4. Or use individual **sliders** for PM2.5, CO2, Temperature, and Humidity\n\n> ?? Threshold changes recalibrate the **AQI gauge**, **LED logic**, and **alert triggers** in real time.`;
+    return `## Dynamic Threshold Customization\n\n1. Open \`Settings\` from the left sidebar (âš™ï¸ icon)\n2. Scroll to **"Dynamic Ward Aerometrics Thresholds"**\n3. Select a preset:\n   - \`ISO Cleanroom\` ï¿½ PM2.5 = 25 ï¿½g/mï¿½, CO2 = 800 ppm\n   - \`ICU Critical\` ï¿½ PM2.5 = 10 ï¿½g/mï¿½, CO2 = 600 ppm\n   - \`General Ward\` ï¿½ PM2.5 = 50 ï¿½g/mï¿½, CO2 = 1000 ppm\n4. Or use individual **sliders** for PM2.5, CO2, Temperature, and Humidity\n\n> ðŸ’¡ Threshold changes recalibrate the **AQI gauge**, **LED logic**, and **alert triggers** in real time.`;
   }
 
-  const tempStatus = latest.temperature >= 20 && latest.temperature <= 22 ? '? Normal' : '?? Deviation';
-  const humStatus = latest.humidity >= 40 && latest.humidity <= 50 ? '? Normal' : '?? Deviation';
-  const co2Status = latest.co2 <= 800 ? '? Normal' : '?? Elevated';
-  const dustStatus = latest.dust <= 25 ? '? Normal' : '?? Exceeded';
+  const tempStatus = latest.temperature >= 20 && latest.temperature <= 22 ? '? Normal' : 'âœ… Deviation';
+  const humStatus = latest.humidity >= 40 && latest.humidity <= 50 ? '? Normal' : 'âœ… Deviation';
+  const co2Status = latest.co2 <= 800 ? '? Normal' : 'âœ… Elevated';
+  const dustStatus = latest.dust <= 25 ? '? Normal' : 'âœ… Exceeded';
 
-  return `## Cleanroom Telemetry Assessment — Node 01\n\n**Overall Score**: **${score} / 100** — ${label}\n\n| Parameter | Reading | ISO Limit | Status |\n|-----------|---------|-----------|--------|\n| Temperature | ${latest.temperature.toFixed(1)} °C | 20–22 °C | ${tempStatus} |\n| Humidity | ${latest.humidity.toFixed(1)} % | 40–50 % | ${humStatus} |\n| CO2 | ${Math.round(latest.co2)} ppm | = 800 ppm | ${co2Status} |\n| PM2.5 | ${latest.dust.toFixed(1)} µg/m³ | = 25.0 µg/m³ | ${dustStatus} |\n| Differential Pressure | -14.2 Pa | Negative isolation | ? Active |\n| Active Alerts | ${alertCount} | 0 = Compliant | ${alertCount === 0 ? '? Clear' : '?? Review'} |\n\n## Clinical Recommendation\n${score >= 80 ? '? All parameters comply with **ISO 14644-1 Grade B Cleanroom** specifications. Continue standard laminar displacement ventilation.' : '?? One or more parameters require attention. Review deviations above and initiate corrective HVAC inspection per ISO 14644-2 §4.'}`;
+  return `## Cleanroom Telemetry Assessment ï¿½ Node 01\n\n**Overall Score**: **${score} / 100** ï¿½ ${label}\n\n| Parameter | Reading | ISO Limit | Status |\n|-----------|---------|-----------|--------|\n| Temperature | ${latest.temperature.toFixed(1)} ï¿½C | 20ï¿½22 ï¿½C | ${tempStatus} |\n| Humidity | ${latest.humidity.toFixed(1)} % | 40ï¿½50 % | ${humStatus} |\n| CO2 | ${Math.round(latest.co2)} ppm | = 800 ppm | ${co2Status} |\n| PM2.5 | ${latest.dust.toFixed(1)} ï¿½g/mï¿½ | = 25.0 ï¿½g/mï¿½ | ${dustStatus} |\n| Differential Pressure | -14.2 Pa | Negative isolation | ? Active |\n| Active Alerts | ${alertCount} | 0 = Compliant | ${alertCount === 0 ? '? Clear' : 'âœ… Review'} |\n\n## Clinical Recommendation\n${score >= 80 ? '? All parameters comply with **ISO 14644-1 Grade B Cleanroom** specifications. Continue standard laminar displacement ventilation.' : 'âœ… One or more parameters require attention. Review deviations above and initiate corrective HVAC inspection per ISO 14644-2 ï¿½4.'}`;
 }
