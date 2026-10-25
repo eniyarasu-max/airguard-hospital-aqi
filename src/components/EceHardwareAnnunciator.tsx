@@ -20,12 +20,16 @@ export const EceHardwareAnnunciator: React.FC<EceHardwareAnnunciatorProps> = ({ 
 
   // Compute live readings and indicators using dynamic hospital thresholds
   const latest = room?.latest;
-  const indicators: HardwareIndicators = evaluateHardwareIndicators(
-    latest?.co2 ?? 420,
-    latest?.dust ?? 5.0,
-    latest?.gas ?? 380,
-    { co2Max: thresholds.co2Max, dustMax: thresholds.dustMax, gasMax: thresholds.gasMax }
-  );
+  // Prioritize physical node's live hardware annunciator state (GPIO 18, 19, 23 & Buzzer 22)
+  const physicalIndicators = latest?.indicators;
+  const indicators: HardwareIndicators = (physicalIndicators && physicalIndicators.state)
+    ? physicalIndicators
+    : evaluateHardwareIndicators(
+        latest?.co2 ?? 420,
+        latest?.dust ?? 5.0,
+        latest?.gas ?? 380,
+        { co2Max: thresholds.co2Max, dustMax: thresholds.dustMax, gasMax: thresholds.gasMax }
+      );
 
   const baseEce = computeEceDiagnostics(latest || {});
   const ece: EceDiagnostics = {

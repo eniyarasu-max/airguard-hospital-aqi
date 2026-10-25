@@ -141,8 +141,8 @@ export function computeAQI(
     5 // tolerance before 0
   );
 
-  // Weighted sum
-  const finalScore = Math.round(
+  // Weighted sum (Composite Baseline)
+  const weightedScore = (
     co2Score * WEIGHTS.co2 +
     dustScore * WEIGHTS.dust +
     tvocScore * WEIGHTS.tvoc +
@@ -150,7 +150,15 @@ export function computeAQI(
     tempScore * WEIGHTS.temperature
   );
 
-  const clampedScore = Math.max(0, Math.min(100, finalScore));
+  // ECE Clinical Dominant Hazard Gating:
+  // In surgical & critical care isolation, a severe breach in any primary particulate or chemical contaminant
+  // (CO2, PM2.5, or TVOC) caps the composite AQI to prevent comfortable temp/humidity from masking airborne hazard.
+  const criticalContaminantMin = Math.min(co2Score, dustScore, tvocScore);
+  const gatedScore = criticalContaminantMin < 50
+    ? Math.min(weightedScore, criticalContaminantMin * 1.25)
+    : weightedScore;
+
+  const clampedScore = Math.max(0, Math.min(100, Math.round(gatedScore)));
 
   let status: AQIResult['status'];
   let color: string;

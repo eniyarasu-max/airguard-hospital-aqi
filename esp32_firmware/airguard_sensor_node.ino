@@ -472,11 +472,29 @@ void pushClinicalTelemetry(const SensorMetrics& m, AnnunciatorState state, bool 
   indDoc.set("state",     (state == STATE_SAFE ? "safe" : state == STATE_CAUTION ? "caution" : "hazard"));
   payload.set("indicators", indDoc);
 
+  // Calculate ECE transducer metrology fields
+  float rs = m.rawGasVolt > 0.01f ? (MQ135_RL_KOHM * (ADC_REF_VOLTAGE - m.rawGasVolt)) / m.rawGasVolt : MQ135_RL_KOHM * 10.0f;
+  float rsR0 = rs / MQ135_R0_CLEANAIR;
+  float tFactor = 1.0f;
+  if (!isnan(m.temperature) && !isnan(m.humidity) && m.temperature > -10.0f && m.humidity > 0.0f) {
+    tFactor = (-0.00035f * m.temperature * m.temperature) - (0.02718f * m.temperature) + 1.39538f - ((m.humidity - 33.0f) * 0.0018f);
+    tFactor = constrain(tFactor, 0.45f, 1.85f);
+  }
+  float dPoint = 0.0f;
+  if (m.humidity > 0.0f) {
+    float rhRatio = constrain(m.humidity / 100.0f, 0.01f, 1.0f);
+    float gamma = (17.27f * m.temperature) / (237.7f + m.temperature) + log(rhRatio);
+    dPoint = (237.7f * gamma) / (17.27f - gamma);
+  }
+
   // ECE Transducer electrical telemetry
   FirebaseJson eceDoc;
   eceDoc.set("rawGasAdc",   m.rawGasAdc);
   eceDoc.set("gasVoltage",  m.rawGasVolt);
   eceDoc.set("dustVoltage", (m.dustDensity * DUST_SENSITIVITY) + DUST_VOLT_OFFSET);
+  eceDoc.set("rsR0Ratio",   rsR0);
+  eceDoc.set("rhCompFactor", tFactor);
+  eceDoc.set("dewPoint",    dPoint);
   payload.set("ece", eceDoc);
 
   // Update /latest
