@@ -135,7 +135,19 @@ uint32_t g_bootTimestamp   = 0;
 float    g_dustEmaFiltered = -1.0f; // Exponential moving average buffer
 
 // Forward declarations
+// NOTE: Explicit type declarations placed here to prevent Arduino IDE
+// auto-prototype injection from causing "does not name a type" errors.
+
+// Annunciator tri-state enum (must precede any function prototype that uses it)
+enum AnnunciatorState {
+  STATE_SAFE,    // Normal: Green LED ON, Yellow/Red OFF, Buzzer OFF
+  STATE_CAUTION, // Elevated: Yellow LED ON, Green/Red OFF, Buzzer OFF
+  STATE_HAZARD   // Critical: Red LED ON, Green/Yellow OFF, Buzzer Pulsing
+};
+
+// Function forward declarations
 int readOversampledAdc(uint8_t pin, int samples = ADC_OVERSAMPLES);
+AnnunciatorState updateHardwareAnnunciators(float co2Ppm, float dustDensity, int rawGas);
 
 // ════════════════════════════════════════════════════════════════════════════
 // 5. HARDWARE-LEVEL SIGNAL PROCESSING & SAMPLING
@@ -310,11 +322,7 @@ SensorMetrics acquireAllSensors() {
 // 7. ECE TRI-STATE HARDWARE ANNUNCIATOR & ACOUSTIC SOUNDER LOGIC
 // ════════════════════════════════════════════════════════════════════════════
 
-enum AnnunciatorState {
-  STATE_SAFE,     // Normal: Green LED ON, Yellow/Red OFF, Buzzer OFF
-  STATE_CAUTION,  // Elevated: Yellow LED ON, Green/Red OFF, Buzzer OFF
-  STATE_HAZARD    // Critical: Red LED ON, Green/Yellow OFF, Buzzer Pulsing
-};
+
 
 AnnunciatorState updateHardwareAnnunciators(float co2Ppm, float dustDensity, int rawGas) {
   AnnunciatorState state;
